@@ -1,0 +1,1897 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>โรงเรียนการถ่ายภาพ — คู่มือผู้เริ่มต้น</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&family=Prompt:wght@400;600;700&display=swap');
+
+  :root {
+    --bg: #0d0f14;
+    --surface: #161920;
+    --surface2: #1e2230;
+    --border: #2a2f3e;
+    --accent: #f5a623;
+    --accent2: #e8724a;
+    --text: #e8ecf4;
+    --muted: #8892a4;
+    --success: #4caf82;
+    --chapter-w: 860px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Sarabun', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.75;
+    font-size: 17px;
+  }
+
+  /* ── SIDEBAR NAV ── */
+  #sidebar {
+    position: fixed; left: 0; top: 0; bottom: 0;
+    width: 270px;
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    overflow-y: auto;
+    z-index: 100;
+    transition: transform .3s ease;
+  }
+  #sidebar::-webkit-scrollbar { width: 4px; }
+  #sidebar::-webkit-scrollbar-track { background: transparent; }
+  #sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+  .sidebar-header {
+    padding: 24px 20px 16px;
+    border-bottom: 1px solid var(--border);
+    position: sticky; top: 0;
+    background: var(--surface);
+  }
+  .sidebar-logo {
+    font-family: 'Prompt', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 4px;
+  }
+  .sidebar-subtitle { font-size: 12px; color: var(--muted); }
+
+  .sidebar-progress {
+    padding: 12px 20px;
+    border-bottom: 1px solid var(--border);
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .progress-bar-wrap {
+    height: 4px; background: var(--border); border-radius: 2px; margin-top: 6px;
+  }
+  .progress-bar-fill {
+    height: 100%; background: var(--accent); border-radius: 2px;
+    transition: width .4s ease; width: 0%;
+  }
+
+  .nav-section-label {
+    padding: 16px 20px 6px;
+    font-size: 10px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 600;
+  }
+
+  .nav-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 9px 20px;
+    cursor: pointer;
+    transition: background .15s;
+    text-decoration: none;
+    color: var(--muted);
+    font-size: 14px;
+  }
+  .nav-item:hover { background: var(--surface2); color: var(--text); }
+  .nav-item.active { background: var(--surface2); color: var(--accent); }
+  .nav-item.done { color: var(--success); }
+  .nav-num {
+    min-width: 22px; height: 22px;
+    border-radius: 50%;
+    border: 1.5px solid currentColor;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 700;
+    flex-shrink: 0;
+  }
+  .nav-item.done .nav-num { background: var(--success); border-color: var(--success); color: #000; }
+  .nav-item.active .nav-num { background: var(--accent); border-color: var(--accent); color: #000; }
+
+  /* ── MAIN ── */
+  #main {
+    margin-left: 270px;
+    min-height: 100vh;
+  }
+
+  /* ── HERO ── */
+  #hero {
+    background: linear-gradient(135deg, #0d0f14 0%, #1a1228 50%, #0d1420 100%);
+    padding: 80px 60px 80px;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+  }
+  #hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse 60% 80% at 80% 50%, rgba(245,166,35,.08) 0%, transparent 70%);
+  }
+  .hero-eyebrow {
+    font-size: 12px; letter-spacing: .15em; text-transform: uppercase;
+    color: var(--accent); font-weight: 700; margin-bottom: 16px;
+  }
+  .hero-title {
+    font-family: 'Prompt', sans-serif;
+    font-size: clamp(32px, 4vw, 52px);
+    font-weight: 700;
+    line-height: 1.15;
+    max-width: 620px;
+    margin-bottom: 20px;
+  }
+  .hero-title span { color: var(--accent); }
+  .hero-desc {
+    font-size: 16px; color: var(--muted);
+    max-width: 520px; margin-bottom: 36px;
+    line-height: 1.8;
+  }
+  .hero-stats {
+    display: flex; gap: 40px; flex-wrap: wrap;
+  }
+  .stat { text-align: left; }
+  .stat-num {
+    font-family: 'Prompt', sans-serif;
+    font-size: 28px; font-weight: 700; color: var(--accent);
+    line-height: 1;
+  }
+  .stat-label { font-size: 12px; color: var(--muted); margin-top: 4px; }
+
+  /* ── CHAPTER PAGE ── */
+  .chapter-page {
+    display: none;
+    padding: 56px 60px 80px;
+    max-width: 900px;
+  }
+  .chapter-page.active { display: block; }
+
+  .chapter-eyebrow {
+    font-size: 11px; letter-spacing: .15em; text-transform: uppercase;
+    color: var(--accent); font-weight: 700; margin-bottom: 12px;
+  }
+  .chapter-title {
+    font-family: 'Prompt', sans-serif;
+    font-size: clamp(24px, 3vw, 38px);
+    font-weight: 700; line-height: 1.2;
+    margin-bottom: 8px;
+  }
+  .chapter-subtitle {
+    font-size: 15px; color: var(--muted); margin-bottom: 36px;
+    padding-bottom: 36px; border-bottom: 1px solid var(--border);
+  }
+
+  .content-block { margin-bottom: 32px; }
+  .content-block h3 {
+    font-family: 'Prompt', sans-serif;
+    font-size: 18px; font-weight: 600;
+    color: var(--accent); margin-bottom: 12px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .content-block h3::before {
+    content: ''; display: block;
+    width: 3px; height: 18px;
+    background: var(--accent); border-radius: 2px;
+  }
+  .content-block p { color: #c8d0de; margin-bottom: 12px; }
+
+  /* cards */
+  .card-grid {
+    display: grid; gap: 16px;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    margin: 20px 0;
+  }
+  .card {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 12px; padding: 20px;
+    transition: border-color .2s, transform .2s;
+  }
+  .card:hover { border-color: var(--accent); transform: translateY(-2px); }
+  .card-icon { font-size: 28px; margin-bottom: 12px; }
+  .card-title { font-weight: 700; font-size: 15px; margin-bottom: 6px; }
+  .card-desc { font-size: 13px; color: var(--muted); line-height: 1.6; }
+
+  /* callout */
+  .callout {
+    border-left: 3px solid var(--accent);
+    background: rgba(245,166,35,.07);
+    border-radius: 0 10px 10px 0;
+    padding: 16px 20px; margin: 20px 0;
+  }
+  .callout.tip { border-color: var(--success); background: rgba(76,175,130,.07); }
+  .callout.warn { border-color: var(--accent2); background: rgba(232,114,74,.07); }
+  .callout-label {
+    font-size: 11px; font-weight: 700; letter-spacing: .1em;
+    text-transform: uppercase; color: var(--accent); margin-bottom: 6px;
+  }
+  .callout.tip .callout-label { color: var(--success); }
+  .callout.warn .callout-label { color: var(--accent2); }
+  .callout p { color: #c8d0de; font-size: 15px; margin: 0; }
+
+  /* aperture / shutter visual */
+  .exposure-visual {
+    display: flex; gap: 12px; flex-wrap: wrap; margin: 20px 0;
+  }
+  .exp-chip {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px; padding: 10px 14px;
+    display: flex; flex-direction: column; align-items: center;
+    min-width: 70px; cursor: default;
+    transition: border-color .2s;
+  }
+  .exp-chip:hover { border-color: var(--accent); }
+  .exp-chip-val { font-family: 'Prompt', sans-serif; font-size: 15px; font-weight: 700; }
+  .exp-chip-label { font-size: 10px; color: var(--muted); margin-top: 4px; }
+
+  /* aperture circle viz */
+  .aperture-demo {
+    display: flex; gap: 20px; align-items: flex-end; flex-wrap: wrap; margin: 20px 0;
+  }
+  .ap-item { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+  .ap-circle {
+    background: var(--bg); border: 2px solid var(--border);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--muted); font-size: 12px; font-weight: 700;
+    transition: background .2s;
+    position: relative; overflow: hidden;
+  }
+  .ap-circle-hole {
+    background: #fff2;
+    border-radius: 50%;
+  }
+  .ap-label { font-size: 12px; color: var(--muted); }
+
+  /* task box */
+  .task-box {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 14px; padding: 24px; margin: 28px 0;
+  }
+  .task-header {
+    display: flex; align-items: center; gap: 12px; margin-bottom: 16px;
+  }
+  .task-badge {
+    background: var(--accent); color: #000;
+    font-size: 11px; font-weight: 700; letter-spacing: .1em;
+    text-transform: uppercase; padding: 4px 10px; border-radius: 20px;
+    white-space: nowrap;
+  }
+  .task-title { font-weight: 700; font-size: 16px; }
+  .task-steps { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+  .task-steps li {
+    display: flex; gap: 12px; align-items: flex-start;
+    color: #c8d0de; font-size: 15px;
+  }
+  .task-steps li::before {
+    content: attr(data-n);
+    min-width: 24px; height: 24px;
+    border-radius: 50%;
+    background: var(--border);
+    color: var(--muted); font-size: 12px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; margin-top: 1px;
+  }
+  .task-done-btn {
+    margin-top: 18px;
+    background: none; border: 1px solid var(--success);
+    color: var(--success); padding: 8px 18px; border-radius: 8px;
+    cursor: pointer; font-family: 'Sarabun', sans-serif; font-size: 14px;
+    transition: background .2s, color .2s;
+  }
+  .task-done-btn:hover, .task-done-btn.done {
+    background: var(--success); color: #000;
+  }
+
+  /* rule cards */
+  .rule-grid {
+    display: grid; gap: 14px;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    margin: 20px 0;
+  }
+  .rule-card {
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 12px; padding: 18px;
+  }
+  .rule-card-icon { font-size: 22px; margin-bottom: 8px; }
+  .rule-card-name { font-weight: 700; font-size: 14px; margin-bottom: 6px; color: var(--accent); }
+  .rule-card-desc { font-size: 13px; color: var(--muted); line-height: 1.6; }
+
+  /* key points */
+  .key-points {
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 12px; padding: 20px 24px; margin: 28px 0;
+  }
+  .key-points-title {
+    font-family: 'Prompt', sans-serif; font-size: 14px; font-weight: 700;
+    color: var(--accent); margin-bottom: 14px;
+    text-transform: uppercase; letter-spacing: .1em;
+  }
+  .key-points ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+  .key-points li {
+    display: flex; gap: 10px; align-items: flex-start;
+    font-size: 14px; color: #c8d0de;
+  }
+  .key-points li::before { content: '→'; color: var(--accent); flex-shrink: 0; margin-top: 1px; }
+
+  /* quiz */
+  .quiz-box {
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 14px; padding: 24px; margin: 28px 0;
+  }
+  .quiz-q { font-weight: 700; font-size: 16px; margin-bottom: 16px; }
+  .quiz-options { display: flex; flex-direction: column; gap: 10px; }
+  .quiz-opt {
+    background: var(--bg); border: 1px solid var(--border);
+    border-radius: 10px; padding: 12px 16px; cursor: pointer;
+    font-size: 15px; transition: border-color .2s, background .2s;
+    text-align: left; color: var(--text);
+    font-family: 'Sarabun', sans-serif;
+  }
+  .quiz-opt:hover { border-color: var(--accent); background: rgba(245,166,35,.06); }
+  .quiz-opt.correct { border-color: var(--success); background: rgba(76,175,130,.1); color: var(--success); }
+  .quiz-opt.wrong { border-color: var(--accent2); background: rgba(232,114,74,.1); color: var(--accent2); }
+  .quiz-feedback {
+    margin-top: 12px; font-size: 14px; display: none; padding: 10px 14px;
+    border-radius: 8px; line-height: 1.6;
+  }
+  .quiz-feedback.show { display: block; }
+  .quiz-feedback.ok { background: rgba(76,175,130,.12); color: var(--success); }
+  .quiz-feedback.no { background: rgba(232,114,74,.12); color: var(--accent2); }
+
+  /* nav footer */
+  .chapter-nav {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-top: 56px; padding-top: 28px; border-top: 1px solid var(--border);
+  }
+  .nav-btn {
+    display: flex; align-items: center; gap: 8px;
+    background: var(--surface2); border: 1px solid var(--border);
+    color: var(--text); padding: 10px 18px; border-radius: 10px;
+    cursor: pointer; font-family: 'Sarabun', sans-serif; font-size: 15px;
+    transition: border-color .2s, background .2s;
+  }
+  .nav-btn:hover { border-color: var(--accent); background: rgba(245,166,35,.06); }
+  .nav-btn:disabled { opacity: .3; cursor: not-allowed; }
+  .nav-btn.primary { background: var(--accent); color: #000; border-color: var(--accent); font-weight: 700; }
+  .nav-btn.primary:hover { background: #f0b84e; }
+
+  /* mobile toggle */
+  #menu-toggle {
+    display: none; position: fixed; top: 14px; left: 14px; z-index: 200;
+    background: var(--accent); color: #000; border: none;
+    width: 40px; height: 40px; border-radius: 10px; font-size: 20px;
+    cursor: pointer;
+  }
+
+  /* ── EXPOSURE BALANCE INTERACTIVE ── */
+  .balance-demo {
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 14px; padding: 24px; margin: 20px 0;
+  }
+  .balance-sliders { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
+  .slider-group label { font-size: 13px; color: var(--muted); display: block; margin-bottom: 8px; }
+  .slider-group input[type=range] {
+    width: 100%; accent-color: var(--accent);
+  }
+  .slider-val { font-family: 'Prompt', sans-serif; font-size: 18px; font-weight: 700; color: var(--accent); }
+  .exposure-result {
+    text-align: center; padding: 16px;
+    background: var(--bg); border-radius: 10px;
+    font-family: 'Prompt', sans-serif; font-size: 15px;
+  }
+  .exp-meter {
+    height: 8px; background: var(--border); border-radius: 4px; margin: 8px 0;
+    position: relative; overflow: visible;
+  }
+  .exp-meter-fill {
+    position: absolute; top: 0; height: 100%;
+    border-radius: 4px; transition: all .3s;
+  }
+  .exp-meter-center {
+    position: absolute; top: -4px; left: 50%;
+    width: 2px; height: 16px; background: var(--muted);
+    transform: translateX(-50%);
+  }
+
+  /* iso noise visual */
+  .iso-demo {
+    display: flex; gap: 12px; flex-wrap: wrap; margin: 20px 0; align-items: flex-end;
+  }
+  .iso-sample {
+    border-radius: 10px; overflow: hidden; flex: 1; min-width: 100px;
+    border: 1px solid var(--border); position: relative;
+  }
+  .iso-canvas { width: 100%; display: block; }
+  .iso-label {
+    position: absolute; bottom: 6px; left: 50%; transform: translateX(-50%);
+    background: rgba(0,0,0,.7); color: var(--accent); font-size: 11px; font-weight: 700;
+    padding: 2px 8px; border-radius: 20px; white-space: nowrap;
+  }
+
+  /* WB color demo */
+  .wb-demo {
+    display: flex; gap: 12px; flex-wrap: wrap; margin: 20px 0;
+  }
+  .wb-chip {
+    flex: 1; min-width: 100px; border-radius: 12px; height: 80px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 700; color: #000; gap: 4px;
+    border: 2px solid transparent; cursor: default;
+  }
+  .wb-chip span { font-size: 11px; opacity: .7; }
+
+  /* DoF visual */
+  .dof-visual {
+    background: var(--bg); border: 1px solid var(--border);
+    border-radius: 12px; padding: 20px; margin: 20px 0; overflow: hidden;
+  }
+  .dof-scene {
+    position: relative; height: 120px;
+    background: linear-gradient(to right, #1a2030 0%, #0a0c12 100%);
+    border-radius: 8px; overflow: hidden;
+  }
+
+  @media (max-width: 768px) {
+    #sidebar { transform: translateX(-100%); }
+    #sidebar.open { transform: translateX(0); }
+    #main { margin-left: 0; }
+    #menu-toggle { display: flex; align-items: center; justify-content: center; }
+    .chapter-page { padding: 56px 20px 60px; }
+    #hero { padding: 70px 20px 60px; }
+    .balance-sliders { grid-template-columns: 1fr; }
+    .hero-stats { gap: 24px; }
+  }
+</style>
+</head>
+<body>
+
+<button id="menu-toggle" onclick="toggleSidebar()">☰</button>
+
+<!-- SIDEBAR -->
+<nav id="sidebar">
+  <div class="sidebar-header">
+    <div class="sidebar-logo">📷 School of Photography</div>
+    <div class="sidebar-subtitle">คู่มือผู้เริ่มต้น — ฉบับภาษาไทย</div>
+  </div>
+  <div class="sidebar-progress">
+    <span id="progress-text">เริ่มต้น</span>
+    <div class="progress-bar-wrap"><div class="progress-bar-fill" id="progress-fill"></div></div>
+  </div>
+  <div class="nav-section-label">บทเรียน</div>
+  <a class="nav-item active" data-page="home" onclick="goTo('home')">
+    <span class="nav-num">🏠</span> หน้าหลัก
+  </a>
+  <a class="nav-item" data-page="ch1" onclick="goTo('ch1')">
+    <span class="nav-num">1</span> แนะนำการถ่ายภาพ
+  </a>
+  <a class="nav-item" data-page="ch2" onclick="goTo('ch2')">
+    <span class="nav-num">2</span> กล้องและอุปกรณ์
+  </a>
+  <a class="nav-item" data-page="ch3" onclick="goTo('ch3')">
+    <span class="nav-num">3</span> โหมดกล้องและการตั้งค่า
+  </a>
+  <a class="nav-item" data-page="ch4" onclick="goTo('ch4')">
+    <span class="nav-num">4</span> การโฟกัส
+  </a>
+  <a class="nav-item" data-page="ch5" onclick="goTo('ch5')">
+    <span class="nav-num">5</span> การจัดองค์ประกอบภาพ
+  </a>
+  <a class="nav-item" data-page="ch6" onclick="goTo('ch6')">
+    <span class="nav-num">6</span> เลนส์และทางยาวโฟกัส
+  </a>
+  <a class="nav-item" data-page="ch7" onclick="goTo('ch7')">
+    <span class="nav-num">7</span> การวัดแสง (Metering)
+  </a>
+  <a class="nav-item" data-page="ch8" onclick="goTo('ch8')">
+    <span class="nav-num">8</span> ISO
+  </a>
+  <a class="nav-item" data-page="ch9" onclick="goTo('ch9')">
+    <span class="nav-num">9</span> รูรับแสงและระยะชัด
+  </a>
+  <a class="nav-item" data-page="ch10" onclick="goTo('ch10')">
+    <span class="nav-num">10</span> ความเร็วชัตเตอร์
+  </a>
+  <a class="nav-item" data-page="ch11" onclick="goTo('ch11')">
+    <span class="nav-num">11</span> การสมดุลการรับแสง
+  </a>
+  <a class="nav-item" data-page="ch12" onclick="goTo('ch12')">
+    <span class="nav-num">12</span> ความละเอียด (Resolution)
+  </a>
+  <a class="nav-item" data-page="ch13" onclick="goTo('ch13')">
+    <span class="nav-num">13</span> แสงและ White Balance
+  </a>
+  <a class="nav-item" data-page="ch14" onclick="goTo('ch14')">
+    <span class="nav-num">14</span> Light Painting
+  </a>
+  <a class="nav-item" data-page="ch15" onclick="goTo('ch15')">
+    <span class="nav-num">15</span> Flash และการสมดุลแสง
+  </a>
+  <a class="nav-item" data-page="ch16" onclick="goTo('ch16')">
+    <span class="nav-num">16</span> Post-production & Raw
+  </a>
+  <a class="nav-item" data-page="ch17" onclick="goTo('ch17')">
+    <span class="nav-num">17</span> บทสรุป
+  </a>
+</nav>
+
+<!-- MAIN CONTENT -->
+<main id="main">
+
+  <!-- HOME -->
+  <div class="chapter-page active" id="page-home">
+    <div id="hero">
+      <div class="hero-eyebrow">The School of Photography</div>
+      <h1 class="hero-title">คู่มือถ่ายภาพ<br><span>สำหรับผู้เริ่มต้น</span></h1>
+      <p class="hero-desc">เรียนรู้ศาสตร์และศิลป์ของการถ่ายภาพตั้งแต่พื้นฐาน — จากทฤษฎีแสง ไปจนถึงการควบคุมกล้องอย่างมืออาชีพ ครบทุกบทตามต้นฉบับภาษาอังกฤษ</p>
+      <div class="hero-stats">
+        <div class="stat"><div class="stat-num">17</div><div class="stat-label">บทเรียน</div></div>
+        <div class="stat"><div class="stat-num">28</div><div class="stat-label">แบบฝึกหัด</div></div>
+        <div class="stat"><div class="stat-num">∞</div><div class="stat-label">การฝึกฝน</div></div>
+      </div>
+    </div>
+    <div style="padding: 40px 60px 80px; max-width: 900px;">
+      <div class="content-block">
+        <h3>วิธีใช้สื่อการเรียนนี้</h3>
+        <p>เลือกบทเรียนจากแถบเมนูด้านซ้าย แต่ละบทมีเนื้อหา ตัวอย่างภาพ แบบฝึกหัด และแบบทดสอบ ควรเรียนตามลำดับเพราะความรู้แต่ละบทต่อยอดกัน</p>
+      </div>
+      <div class="card-grid">
+        <div class="card" onclick="goTo('ch1')" style="cursor:pointer">
+          <div class="card-icon">📸</div>
+          <div class="card-title">การถ่ายภาพคืออะไร?</div>
+          <div class="card-desc">ทำความเข้าใจรากฐานของการถ่ายภาพในฐานะวิทยาศาสตร์แห่งแสง</div>
+        </div>
+        <div class="card" onclick="goTo('ch5')" style="cursor:pointer">
+          <div class="card-icon">🎨</div>
+          <div class="card-title">องค์ประกอบภาพ</div>
+          <div class="card-desc">กฎสำคัญที่ทำให้ภาพดูดีขึ้นทันทีโดยไม่ต้องพึ่งเทคนิคซับซ้อน</div>
+        </div>
+        <div class="card" onclick="goTo('ch9')" style="cursor:pointer">
+          <div class="card-icon">🔆</div>
+          <div class="card-title">รูรับแสงและระยะชัด</div>
+          <div class="card-desc">เรียนรู้การควบคุม f-stop เพื่อสร้างโบเก้หรือความคมชัดทั้งภาพ</div>
+        </div>
+        <div class="card" onclick="goTo('ch11')" style="cursor:pointer">
+          <div class="card-icon">⚖️</div>
+          <div class="card-title">การสมดุลการรับแสง</div>
+          <div class="card-desc">หัวใจของการถ่ายภาพ — ผสาน aperture, shutter speed และ ISO</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CH1: Introduction -->
+  <div class="chapter-page" id="page-ch1">
+    <div class="chapter-eyebrow">บทที่ 1</div>
+    <h1 class="chapter-title">แนะนำการถ่ายภาพ</h1>
+    <p class="chapter-subtitle">การถ่ายภาพคือวิทยาศาสตร์แห่งแสง — เรียนรู้วิทยาศาสตร์ก่อน แล้วความคิดสร้างสรรค์จะตามมา</p>
+
+    <div class="content-block">
+      <h3>การถ่ายภาพคืออะไร?</h3>
+      <p>หลายคนตอบว่า มันคือศิลปะ, บันทึกความทรงจำ, หรือบันทึกประวัติศาสตร์ ซึ่งถูกทั้งหมด แต่แก่นแท้ของการถ่ายภาพคือ <strong>การจับภาพแสง</strong></p>
+      <p>การถ่ายภาพเป็นวิทยาศาสตร์ — ถูกคิดค้นโดยนักวิทยาศาสตร์ ไม่ใช่ศิลปิน คุณต้องเรียนรู้วิทยาศาสตร์หรือ "หัตถกรรม" ของการถ่ายภาพก่อน แล้วค่อยใช้ความรู้นั้นในการสร้างสรรค์ผลงาน</p>
+    </div>
+
+    <div class="callout">
+      <div class="callout-label">💡 แนวคิดหลัก</div>
+      <p>หัตถกรรมของการถ่ายภาพไม่เคยเปลี่ยนแปลงนับตั้งแต่มีการประดิษฐ์ในช่วงทศวรรษ 1830 และจะคงเดิมตลอดไป เพราะมันคือกฎฟิสิกส์ — การจับภาพแสงเดินทางผ่านเลนส์ไปยังระนาบรับภาพ</p>
+    </div>
+
+    <div class="content-block">
+      <h3>วิวัฒนาการของการถ่ายภาพ</h3>
+      <p>เมื่อการถ่ายภาพถูกประดิษฐ์ขึ้น แสงถูกบันทึกบนโลหะและกระดาษ จากนั้นเป็นกระจก ฟิล์มพลาสติก และปัจจุบันคือชิปดิจิทัล แต่กระบวนการพื้นฐานยังคงเดิม</p>
+    </div>
+
+    <div class="card-grid">
+      <div class="card"><div class="card-icon">🔬</div><div class="card-title">โลหะ/กระดาษ (ยุคแรก)</div><div class="card-desc">ภาพถ่ายชิ้นแรกของโลก "View from the Window at Le Gras" ถ่ายบนโลหะ</div></div>
+      <div class="card"><div class="card-icon">🔭</div><div class="card-title">กระจก</div><div class="card-desc">Collodion process ให้ภาพที่ละเอียดและคมชัดขึ้น</div></div>
+      <div class="card"><div class="card-icon">🎞️</div><div class="card-title">ฟิล์มพลาสติก</div><div class="card-desc">ทำให้การถ่ายภาพเข้าถึงได้สำหรับทุกคน</div></div>
+      <div class="card"><div class="card-icon">💾</div><div class="card-title">ชิปดิจิทัล</div><div class="card-desc">เซ็นเซอร์ดิจิทัลในกล้องสมัยใหม่</div></div>
+    </div>
+
+    <div class="callout tip">
+      <div class="callout-label">✅ สิ่งที่สำคัญ</div>
+      <p>ภาพถ่ายเก่าจากยุค 1900s ก็ยังแสดงให้เห็น depth of field และการเบลอจากการเคลื่อนไหว — เหมือนกันกับยุคนี้ทุกประการ Aperture ควบคุม depth of field, shutter speed ควบคุมการเบลอจากการเคลื่อนไหว</p>
+    </div>
+
+    <div class="quiz-box">
+      <div class="quiz-q">🧠 คำถาม: การถ่ายภาพในแก่นแท้คืออะไร?</div>
+      <div class="quiz-options">
+        <button class="quiz-opt" onclick="answer(this,false)">ศิลปะแห่งการจัดองค์ประกอบ</button>
+        <button class="quiz-opt" onclick="answer(this,true)">การจับภาพแสง</button>
+        <button class="quiz-opt" onclick="answer(this,false)">การบันทึกความทรงจำ</button>
+        <button class="quiz-opt" onclick="answer(this,false)">เทคโนโลยีกล้องถ่ายภาพ</button>
+      </div>
+      <div class="quiz-feedback ok">✅ ถูกต้อง! การถ่ายภาพคือการจับภาพแสง (Capturing Light) ทุกอย่างอื่นเป็นผลลัพธ์ที่ตามมา</div>
+      <div class="quiz-feedback no">❌ ไม่ถูกต้อง การถ่ายภาพในแก่นแท้คือ "การจับภาพแสง" — แสงเดินทางผ่านเลนส์และถูกบันทึกบนพื้นผิวรับภาพ</div>
+    </div>
+
+    <div class="chapter-nav">
+      <button class="nav-btn" disabled>← ก่อนหน้า</button>
+      <button class="nav-btn primary" onclick="goTo('ch2')">บทที่ 2: กล้องและอุปกรณ์ →</button>
+    </div>
+  </div>
+
+  <!-- CH2: Camera Kits -->
+  <div class="chapter-page" id="page-ch2">
+    <div class="chapter-eyebrow">บทที่ 2</div>
+    <h1 class="chapter-title">กล้องและอุปกรณ์จำเป็น</h1>
+    <p class="chapter-subtitle">เลือกกล้องที่เหมาะสมและเตรียมอุปกรณ์พื้นฐานก่อนเริ่มต้น</p>
+
+    <div class="content-block">
+      <h3>ประเภทของกล้อง</h3>
+      <p>กล้องสำหรับใช้งานทั่วไปมี 4 ประเภทหลัก แต่ละประเภทมีข้อดีข้อเสียต่างกัน</p>
+    </div>
+
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-icon">📷</div>
+        <div class="card-title">Compact Camera</div>
+        <div class="card-desc">กล้องคอมแพคขนาดเล็ก ปัจจุบันสมาร์ทโฟนทำงานได้ดีกว่าในหลายกรณี ยังมีประโยชน์สำหรับรุ่นกันน้ำ</div>
+      </div>
+      <div class="card">
+        <div class="card-icon">🔭</div>
+        <div class="card-title">Bridge Camera</div>
+        <div class="card-desc">ผสมผสานระหว่าง Compact และ SLR แต่เปลี่ยนเลนส์ไม่ได้ และการตั้งค่า Manual เข้าถึงยาก <em>ไม่แนะนำสำหรับการเรียนถ่ายภาพ</em></div>
+      </div>
+      <div class="card">
+        <div class="card-icon">📸</div>
+        <div class="card-title">Mirrorless Camera</div>
+        <div class="card-desc">ไม่มีกระจกปริซึม ใช้หน้าจอดิจิทัล เข้าถึง Manual ได้ง่าย เปลี่ยนเลนส์ได้ คุณภาพดี</div>
+      </div>
+      <div class="card" style="border-color: var(--accent);">
+        <div class="card-icon">⭐</div>
+        <div class="card-title">DSLR Camera</div>
+        <div class="card-desc"><strong style="color:var(--accent)">แนะนำที่สุดสำหรับผู้เริ่มต้น</strong> — เปลี่ยนเลนส์ได้, Manual ใช้งานง่าย, คุณภาพสูง, คุ้มค่า, อัพเกรดได้ในอนาคต</div>
+      </div>
+    </div>
+
+    <div class="content-block">
+      <h3>อุปกรณ์จำเป็น</h3>
+    </div>
+
+    <div class="rule-grid">
+      <div class="rule-card">
+        <div class="rule-card-icon">📐</div>
+        <div class="rule-card-name">ขาตั้งกล้อง (Tripod)</div>
+        <div class="rule-card-desc">ต้องมั่นคงและรองรับน้ำหนักกล้องได้ หลีกเลี่ยงขาตั้งราคาถูกที่ไม่แข็งแรง</div>
+      </div>
+      <div class="rule-card">
+        <div class="rule-card-icon">💾</div>
+        <div class="rule-card-name">Memory Card สำรอง</div>
+        <div class="rule-card-desc">พกติดตัวเสมอ เพราะการ์ดอาจเต็มระหว่างถ่ายภาพ</div>
+      </div>
+      <div class="rule-card">
+        <div class="rule-card-icon">🔋</div>
+        <div class="rule-card-name">แบตเตอรี่สำรอง</div>
+        <div class="rule-card-desc">ควรมีสำรองไว้เสมอโดยเฉพาะเมื่อถ่ายนาน</div>
+      </div>
+      <div class="rule-card">
+        <div class="rule-card-icon">🛡️</div>
+        <div class="rule-card-name">Lens Hood</div>
+        <div class="rule-card-desc">ลด lens flare และเพิ่ม contrast ให้ภาพ</div>
+      </div>
+      <div class="rule-card">
+        <div class="rule-card-icon">🧹</div>
+        <div class="rule-card-name">ชุดทำความสะอาดเลนส์</div>
+        <div class="rule-card-desc">เลนส์สกปรกส่งผลต่อคุณภาพภาพมากกว่าที่คิด ทำความสะอาดสม่ำเสมอ</div>
+      </div>
+      <div class="rule-card">
+        <div class="rule-card-icon">🎒</div>
+        <div class="rule-card-name">กระเป๋ากล้อง</div>
+        <div class="rule-card-desc">ป้องกันอุปกรณ์ทั้งหมด แนะนำรุ่น Rucksack สะดวกใส่ได้ทั้งวัน</div>
+      </div>
+    </div>
+
+    <div class="chapter-nav">
+      <button class="nav-btn" onclick="goTo('ch1')">← บทที่ 1</button>
+      <button class="nav-btn primary" onclick="goTo('ch3')">บทที่ 3: โหมดกล้อง →</button>
+    </div>
+  </div>
+
+  <!-- CH3: Camera Modes -->
+  <div class="chapter-page" id="page-ch3">
+    <div class="chapter-eyebrow">บทที่ 3</div>
+    <h1 class="chapter-title">โหมดกล้องและการตั้งค่า</h1>
+    <p class="chapter-subtitle">ลืม Auto ไปได้เลย — เรียนรู้โหมด Manual ทั้ง 4 แบบ</p>
+
+    <div class="callout warn">
+      <div class="callout-label">🚫 ข้อห้าม!</div>
+      <p>โหมด Auto เช่น Portrait (รูปหัวคน) หรือ Landscape (รูปภูเขา) ถูก <strong>ห้ามใช้!</strong> ตั้งแต่นี้เป็นต้นไป ใช้เฉพาะโหมด Manual เท่านั้น</p>
+    </div>
+
+    <div class="content-block">
+      <h3>โหมด Manual ทั้ง 4 แบบ</h3>
+    </div>
+
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-icon" style="font-family:'Prompt';font-weight:700;color:var(--accent);font-size:32px;">P</div>
+        <div class="card-title">Program Mode</div>
+        <div class="card-desc">Auto มากที่สุดในบรรดา Manual กล้องตั้งค่าการรับแสงให้ แต่คุณสามารถปรับ exposure ได้รวดเร็วโดยหมุน dial</div>
+      </div>
+      <div class="card">
+        <div class="card-icon" style="font-family:'Prompt';font-weight:700;color:var(--accent);font-size:24px;">Tv/S</div>
+        <div class="card-title">Shutter Priority</div>
+        <div class="card-desc">คุณกำหนด shutter speed กล้องจะตั้ง aperture ให้เองเพื่อ exposure ที่ถูกต้อง เหมาะสำหรับควบคุมการเบลอจากการเคลื่อนไหว</div>
+      </div>
+      <div class="card">
+        <div class="card-icon" style="font-family:'Prompt';font-weight:700;color:var(--accent);font-size:24px;">Av/A</div>
+        <div class="card-title">Aperture Priority</div>
+        <div class="card-desc">คุณกำหนด aperture กล้องจะตั้ง shutter speed ให้เองเพื่อ exposure ที่ถูกต้อง เหมาะสำหรับควบคุม depth of field</div>
+      </div>
+      <div class="card" style="border-color: var(--accent);">
+        <div class="card-icon" style="font-family:'Prompt';font-weight:700;color:var(--accent);font-size:32px;">M</div>
+        <div class="card-title">Manual Mode</div>
+        <div class="card-desc"><strong style="color:var(--accent)">คุณควบคุมทุกอย่าง!</strong> ทั้ง shutter speed และ aperture — ใช้เมื่อต้องการความสร้างสรรค์เต็มที่</div>
+      </div>
+    </div>
+
+    <div class="content-block">
+      <h3>สิ่งที่ผิดพลาดได้ในการรับแสง</h3>
+      <p>มีเพียง 3 สิ่งที่อาจผิดพลาด:</p>
+    </div>
+
+    <div class="rule-grid">
+      <div class="rule-card">
+        <div class="rule-card-icon">🌑</div>
+        <div class="rule-card-name">ภาพมืดเกิน (Underexposed)</div>
+        <div class="rule-card-desc">แสงเข้ากล้องน้อยเกินไป ต้องเพิ่มแสงเข้ามา</div>
+      </div>
+      <div class="rule-card">
+        <div class="rule-card-icon">🌕</div>
+        <div class="rule-card-name">ภาพสว่างเกิน (Overexposed)</div>
+        <div class="rule-card-desc">แสงเข้ากล้องมากเกินไป ต้องลดแสงลง</div>
+      </div>
+      <div class="rule-card">
+        <div class="rule-card-icon">💨</div>
+        <div class="rule-card-name">ภาพเบลอ (Camera Shake)</div>
+        <div class="rule-card-desc">แสงเข้าช้าขณะกล้องหรือวัตถุเคลื่อนที่ ใช้ shutter speed เร็วขึ้น</div>
+      </div>
+    </div>
+
+    <div class="task-box">
+      <div class="task-header">
+        <span class="task-badge">แบบฝึกหัด #1</span>
+        <span class="task-title">ทดลองโหมดต่างๆ</span>
+      </div>
+      <ul class="task-steps">
+        <li data-n="1">ตั้งกล้องที่โหมด Tv หรือ S ถ่ายภาพ หมุน dial หลายครั้ง ถ่ายภาพอีกครั้ง</li>
+        <li data-n="2">ทำแบบเดิมในโหมด Av หรือ A</li>
+        <li data-n="3">ทำแบบเดิมในโหมด P</li>
+        <li data-n="4">จดบันทึกว่าอะไรผิดพลาด — ภาพมืดไป สว่างไป หรือเบลอ?</li>
+      </ul>
+      <button class="task-done-btn" onclick="markDone(this)">✓ ทำเสร็จแล้ว</button>
+    </div>
+
+    <div class="chapter-nav">
+      <button class="nav-btn" onclick="goTo('ch2')">← บทที่ 2</button>
+      <button class="nav-btn primary" onclick="goTo('ch4')">บทที่ 4: การโฟกัส →</button>
+    </div>
+  </div>
+
+  <!-- CH4: Focusing -->
+  <div class="chapter-page" id="page-ch4">
+    <div class="chapter-eyebrow">บทที่ 4</div>
+    <h1 class="chapter-title">การโฟกัส</h1>
+    <p class="chapter-subtitle">จุดโฟกัสคือที่แรกที่สายตาผู้ดูจะมองไป — ควบคุมมันให้ได้</p>
+
+    <div class="content-block">
+      <h3>พื้นฐานการโฟกัส</h3>
+      <p>กล้องมักจะโฟกัสไปที่สิ่งที่มีความแตกต่าง (contrast) สูงสุดในเฟรมโดยอัตโนมัติ ซึ่งอาจไม่ใช่สิ่งที่คุณต้องการ คุณต้องเรียนรู้การควบคุมจุดโฟกัสด้วยตัวเอง</p>
+    </div>
+
+    <div class="callout">
+      <div class="callout-label">📌 สิ่งสำคัญก่อนเริ่ม</div>
+      <p>1. Autofocus ต้องมีรายละเอียดให้โฟกัส — จะไม่สามารถโฟกัสบนกำแพงสีขาวล้วนหรือในที่มืดสนิท<br>
+      2. ปุ่ม Shutter มี 2 ระยะ: กด <strong>ครึ่งทาง = โฟกัส</strong>, กด <strong>เต็มทาง = ถ่ายภาพ</strong><br>
+      3. เลนส์มีระยะโฟกัสขั้นต่ำ หากวัตถุใกล้เกินไปกล้องจะโฟกัสไม่ได้</p>
+    </div>
+
+    <div class="content-block">
+      <h3>โหมดการโฟกัส</h3>
+    </div>
+
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-icon">🎯</div>
+        <div class="card-title">Automatic Selection</div>
+        <div class="card-desc">กล้องโฟกัสที่สิ่งที่โดดเด่นที่สุดในเฟรม โดยทั่วไปคือสิ่งที่ใหญ่และใกล้กล้องที่สุด</div>
+      </div>
+      <div class="card" style="border-color: var(--accent);">
+        <div class="card-icon">⭕</div>
+        <div class="card-title">Spot Autofocus ⭐</div>
+        <div class="card-desc"><strong style="color:var(--accent)">แนะนำ!</strong> กำหนดให้กล้องโฟกัสที่จุดเฉพาะ เช่น กลางเฟรม — เหมาะสำหรับการเรียนรู้</div>
+      </div>
+      <div class="card">
+        <div class="card-icon">🔧</div>
+        <div class="card-title">Manual Focus</div>
+        <div class="card-desc">คุณควบคุมโฟกัสเองจากเลนส์ เหมาะสำหรับสภาพแสงน้อยหรือ contrast ต่ำ</div>
+      </div>
+    </div>
+
+    <div class="content-block">
+      <h3>โหมด Focusing Mode</h3>
+      <div class="rule-grid">
+        <div class="rule-card">
+          <div class="rule-card-icon">📷</div>
+          <div class="rule-card-name">Single-shot (One-shot / AF-S)</div>
+          <div class="rule-card-desc">ใช้กับวัตถุนิ่ง เช่น ภาพบุคคล ภาพทิวทัศน์ <strong>แนะนำสำหรับผู้เริ่มต้น</strong></div>
+        </div>
+        <div class="rule-card">
+          <div class="rule-card-icon">🏃</div>
+          <div class="rule-card-name">Continuous (AI Servo / AF-C)</div>
+          <div class="rule-card-desc">ใช้กับวัตถุที่เคลื่อนไหว เช่น จักรยานหรือรถยนต์ กล้องจะติดตามวัตถุอัตโนมัติ</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="task-box">
+      <div class="task-header">
+        <span class="task-badge">แบบฝึกหัด #3</span>
+        <span class="task-title">ควบคุมจุดโฟกัส (Focus – Reframe – Shoot)</span>
+      </div>
+      <ul class="task-steps">
+        <li data-n="1">ตั้งกล้องที่ P, Spot AF, กลางเฟรม, One-shot AF, ISO Auto</li>
+        <li data-n="2">วางวัตถุห่างกล้องประมาณ 1 เมตร และมีระยะห่างจากพื้นหลัง 5 เมตรขึ้นไป</li>
+        <li data-n="3"><strong>Shot A:</strong> โฟกัสวัตถุกลางเฟรม ถ่ายภาพ</li>
+        <li data-n="4"><strong>Shot B:</strong> โฟกัสวัตถุ → กด shutter ค้างครึ่งทาง → เลื่อนกล้องให้วัตถุอยู่ด้านซ้าย → ถ่ายภาพ</li>
+        <li data-n="5"><strong>Shot C:</strong> ทำซ้ำ แต่วัตถุอยู่ด้านขวา</li>
+        <li data-n="6">จำสูตร: <strong>โฟกัส → จัดเฟรมใหม่ → ถ่ายภาพ</strong></li>
+      </ul>
+      <button class="task-done-btn" onclick="markDone(this)">✓ ทำเสร็จแล้ว</button>
+    </div>
+
+    <div class="chapter-nav">
+      <button class="nav-btn" onclick="goTo('ch3')">← บทที่ 3</button>
+      <button class="nav-btn primary" onclick="goTo('ch5')">บทที่ 5: องค์ประกอบภาพ →</button>
+    </div>
+  </div>
+
+  <!-- CH5: Composition -->
+  <div class="chapter-page" id="page-ch5">
+    <div class="chapter-eyebrow">บทที่ 5</div>
+    <h1 class="chapter-title">ศิลปะการจัดองค์ประกอบภาพ</h1>
+    <p class="chapter-subtitle">สิ่งสำคัญที่สุดในการถ่ายภาพ — ทำให้ภาพดีขึ้นได้ 10 เท่าโดยไม่ต้องพึ่งเทคนิคซับซ้อน</p>
+
+    <div class="content-block">
+      <h3>องค์ประกอบภาพคืออะไร?</h3>
+      <p>องค์ประกอบภาพ (Composition) คือการจัดวางองค์ประกอบต่างๆ ในเฟรม — วัตถุหลัก, พื้นหน้า, พื้นหลัง, อุปกรณ์ประกอบฉาก ทุกอย่างที่อยู่ในเฟรมอยู่ที่นั่นเพราะ <strong>คุณต้องการให้มันอยู่ที่นั่น</strong></p>
+      <p>การเปลี่ยนองค์ประกอบ เช่น ย้ายตำแหน่งวัตถุ เปลี่ยนมุมมอง หรือเข้าใกล้มากขึ้น จะเปลี่ยนอารมณ์ของภาพโดยสิ้นเชิง</p>
+    </div>
+
+    <div class="content-block">
+      <h3>กฎการจัดองค์ประกอบภาพ</h3>
+      <p>กฎเหล่านี้ไม่ได้ถูกสร้างขึ้นโดยช่างภาพ — มันเป็นผลมาจากธรรมชาติของมนุษย์ วิธีที่เรามองและตีความโลก คุณสามารถใช้กฎเหล่านี้เพื่อสร้างภาพที่แข็งแกร่งขึ้น</p>
+    </div>
+
+    <div class="rule-grid">
+      <div class="rule-card">
+        <div class="rule-card-icon">⅓</div>
+        <div class="rule-card-name">Rule of Thirds (กฎหนึ่งในสาม)</div>
+        <div class="rule-card-desc">วางวัตถุหลักในหนึ่งในสามของเฟรม ภาพจะดูเป็นธรรมชาติมากขึ้น เพราะธรรมชาติไม่ได้วางสิ่งต่างๆ ไว้ตรงกลางพอดี</div>
+      </div>
+      <div class="rule-card">
+        <div class="rule-card-icon">1️⃣3️⃣5️⃣</div>
+        <div class="rule-card-name">Rule of Odds (กฎเลขคี่)</div>
+        <div class="rule-card-desc">จำนวนวัตถุคี่ (1, 3, 5...) ให้ความรู้สึกเป็นธรรมชาติ และดึงสายตาไปที่วัตถุกลาง</div>
+      </div>
+      <div class="rule-card">
+        <div class="rule-card-icon">2️⃣4️⃣6️⃣</div>
+        <div class="rule-card-name">Rule of Evens (กฎเลขคู่)</div>
+        <div class="rule-card-desc">จำนวนวัตถุคู่สร้างความตึงเครียด ไม่เป็นธรรมชาติ ดึงสายตาผู้ดูให้จ้องนานขึ้น</div>
+      </div>
+      <div class="rule-card">
+        <div class="rule-card-icon">🔺</div>
+        <div class="rule-card-name">Rule of Triangles (กฎสามเหลี่ยม)</div>
+        <div class="rule-card-desc">องค์ประกอบรูปสามเหลี่ยมให้ความรู้สึกมั่นคง แข็งแกร่ง และแสดงลำดับชั้นได้ดี</div>
+      </div>
+      <div class="rule-card">
+        <div class="rule-card-icon">↔️</div>
+        <div class="rule-card-name">Rule of Space (กฎพื้นที่)</div>
+        <div class="rule-card-desc">วางพื้นที่ว่างในทิศทางที่บุคคลมองหรือวัตถุกำลังเคลื่อนที่ ทำให้ดูเป็นธรรมชาติ</div>
+      </div>
+      <div class="rule-card">
+        <div class="rule-card-icon">🖼️</div>
+        <div class="rule-card-name">Frame within a Frame</div>
+        <div class="rule-card-desc">ใช้วัตถุในฉากเป็น "กรอบ" ล้อมวัตถุหลัก ดึงสายตาผู้ดูเข้าสู่จุดสำคัญ</div>
+      </div>
+      <div class="rule-card">
+        <div class="rule-card-icon">🔄</div>
+        <div class="rule-card-name">Symmetry (ความสมมาตร)</div>
+        <div class="rule-card-desc">ตรงข้ามกับ Rule of Thirds — ให้ความรู้สึกสะอาด เป็นระเบียบ และเทียมธรรมชาติ</div>
+      </div>
+      <div class="rule-card">
+        <div class="rule-card-icon">➡️</div>
+        <div class="rule-card-name">Leading Lines (เส้นนำสายตา)</div>
+        <div class="rule-card-desc">ใช้วัตถุในฉากเป็นเส้นนำสายตาจากพื้นหน้าสู่พื้นหลัง เพิ่มความลึกและน่าสนใจ</div>
+      </div>
+    </div>
+
+    <div class="callout tip">
+      <div class="callout-label">💡 จำไว้เสมอ</div>
+      <p>กฎองค์ประกอบภาพมีไว้เพื่อ <strong>เสริม</strong> ความรู้สึกของภาพ ไม่ใช่สร้างมันขึ้นมาเอง ถ้าคุณถ่ายภาพคนสองคนที่หัวเราะสนุกสนาน ความรู้สึกตึงเครียดจาก "กฎเลขคู่" ก็จะไม่มีผล</p>
+    </div>
+
+    <div class="task-box">
+      <div class="task-header">
+        <span class="task-badge">แบบฝึกหัด #5</span>
+        <span class="task-title">ถ่ายภาพแสดงการใช้องค์ประกอบที่ดี</span>
+      </div>
+      <ul class="task-steps">
+        <li data-n="1">ตั้งกล้องที่ P, ISO Auto</li>
+        <li data-n="2">เลือกกฎอย่างน้อย 3 ข้อเพื่อฝึก ใช้คน สิ่งก่อสร้าง หรือทิวทัศน์ก็ได้</li>
+        <li data-n="3">จดบันทึกว่ากฎใดได้ผลดีที่สุดและทำไม</li>
+        <li data-n="4">จดบันทึกว่ากฎใดไม่ได้ผลและทำไม (การผิดพลาดสำคัญต่อการเรียนรู้!)</li>
+      </ul>
+      <button class="task-done-btn" onclick="markDone(this)">✓ ทำเสร็จแล้ว</button>
+    </div>
+
+    <div class="chapter-nav">
+      <button class="nav-btn" onclick="goTo('ch4')">← บทที่ 4</button>
+      <button class="nav-btn primary" onclick="goTo('ch6')">บทที่ 6: เลนส์ →</button>
+    </div>
+  </div>
+
+  <!-- CH6: Lenses -->
+  <div class="chapter-page" id="page-ch6">
+    <div class="chapter-eyebrow">บทที่ 6</div>
+    <h1 class="chapter-title">เลนส์และทางยาวโฟกัส</h1>
+    <p class="chapter-subtitle">เลนส์ไม่ใช่แค่เพื่อซูมเข้า-ออก แต่ส่งผลต่อการบิดเบือนและระยะชัดของภาพ</p>
+
+    <div class="content-block">
+      <h3>ประเภทเลนส์</h3>
+      <div class="card-grid">
+        <div class="card">
+          <div class="card-icon">🔍</div>
+          <div class="card-title">Prime Lens (ทางยาวโฟกัสคงที่)</div>
+          <div class="card-desc">ซูมไม่ได้ ต้องเดินหน้า-หลังเอง <strong>ข้อดี:</strong> ออปติคัลดีกว่า, rรูรับแสงกว้างกว่าในราคาเท่ากัน, ทำให้คิดเรื่อง composition มากขึ้น</div>
+        </div>
+        <div class="card">
+          <div class="card-icon">🔭</div>
+          <div class="card-title">Zoom Lens (ซูมได้)</div>
+          <div class="card-desc">ปรับทางยาวโฟกัสได้ <strong>ข้อดี:</strong> ยืดหยุ่น เลนส์เดียวใช้ได้หลายสถานการณ์ <strong>ข้อเสีย:</strong> คุณภาพภาพน้อยกว่า, รูรับแสงแคบกว่า</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="content-block">
+      <h3>ทางยาวโฟกัสและผลต่อภาพ</h3>
+      <p>ยิ่งตัวเลขน้อย = มุมภาพกว้าง เห็นมากขึ้น; ยิ่งตัวเลขมาก = ซูมเข้า เห็นน้อยลง</p>
+    </div>
+
+    <div class="exposure-visual">
+      <div class="exp-chip"><span class="exp-chip-val" style="color:#e87">16mm</span><span class="exp-chip-label">Ultra Wide — ภาพทิวทัศน์</span></div>
+      <div class="exp-chip"><span class="exp-chip-val" style="color:#fa0">28mm</span><span class="exp-chip-label">Wide Angle</span></div>
+      <div class="exp-chip"><span class="exp-chip-val" style="color:#ff0">50mm</span><span class="exp-chip-label">Standard — เหมือนตาคน</span></div>
+      <div class="exp-chip"><span class="exp-chip-val" style="color:#8f8">80mm</span><span class="exp-chip-label">Portrait — แนะนำ!</span></div>
+      <div class="exp-chip"><span class="exp-chip-val" style="color:#4af">200mm+</span><span class="exp-chip-label">Telephoto — กีฬา/สัตว์ป่า</span></div>
+    </div>
+
+    <div class="callout">
+      <div class="callout-label">⚠️ ข้อผิดพลาดที่พบบ่อย</div>
+      <p>อย่าซูมเข้า-ออกเพราะ "ขี้เกียจเดิน" — ใช้ทางยาวโฟกัสเพื่อสร้างเอฟเฟกต์ที่ต้องการ! ภาพถ่ายที่ 16mm กับ 100mm ของวัตถุเดียวกันให้ผลลัพธ์ที่ต่างกันมาก — ทั้งสัดส่วนหน้าและการบิดเบือน</p>
+    </div>
+
+    <div class="content-block">
+      <h3>ขนาด Sensor และผลต่อ Focal Length</h3>
+      <div class="rule-grid">
+        <div class="rule-card">
+          <div class="rule-card-icon">📐</div>
+          <div class="rule-card-name">Full-frame (35mm)</div>
+          <div class="rule-card-desc">ตัวเลขตามมาตรฐาน 50mm = มองเห็นเหมือนตาคน</div>
+        </div>
+        <div class="rule-card">
+          <div class="rule-card-icon">📷</div>
+          <div class="rule-card-name">Crop Sensor (~22mm)</div>
+          <div class="rule-card-desc">31mm บน crop sensor ≈ 50mm บน full-frame (คูณ 1.6x)</div>
+        </div>
+        <div class="rule-card">
+          <div class="rule-card-icon">📸</div>
+          <div class="rule-card-name">Micro Four Thirds (17mm)</div>
+          <div class="rule-card-desc">25mm ≈ 50mm full-frame (คูณ 2x)</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="chapter-nav">
+      <button class="nav-btn" onclick="goTo('ch5')">← บทที่ 5</button>
+      <button class="nav-btn primary" onclick="goTo('ch7')">บทที่ 7: Metering →</button>
+    </div>
+  </div>
+
+  <!-- CH7: Metering -->
+  <div class="chapter-page" id="page-ch7">
+    <div class="chapter-eyebrow">บทที่ 7</div>
+    <h1 class="chapter-title">การวัดแสง (Metering)</h1>
+    <p class="chapter-subtitle">กล้องวัดแสงอย่างไร และคุณจะควบคุมผลลัพธ์ได้อย่างไร</p>
+
+    <div class="content-block">
+      <h3>Metering คืออะไร?</h3>
+      <p>Metering คือกระบวนการที่กล้องวัดปริมาณแสงที่มีในฉาก เพื่อกำหนดการรับแสงที่ถูกต้อง เข้าใจ metering จะช่วยให้ถ่ายภาพในสภาพแสงยากๆ ได้ เช่น วัตถุอยู่หน้าหน้าต่างที่สว่าง</p>
+    </div>
+
+    <div class="content-block">
+      <h3>โหมด Metering</h3>
+    </div>
+
+    <div class="card-grid">
+      <div class="card" style="border-color: var(--accent);">
+        <div class="card-icon">📊</div>
+        <div class="card-title">Evaluative / Matrix Metering ⭐</div>
+        <div class="card-desc"><strong style="color:var(--accent)">ค่าเริ่มต้น</strong> — วัดแสงทั่วทั้งเฟรม แต่ให้น้ำหนักที่จุดโฟกัสมากกว่า ทำงานได้ดีในสถานการณ์ส่วนใหญ่</div>
+      </div>
+      <div class="card">
+        <div class="card-icon">⚖️</div>
+        <div class="card-title">Center-weighted / Average Metering</div>
+        <div class="card-desc">วัดแสงทั้งเฟรมแต่เน้นที่กลางภาพ ไม่สนใจจุดโฟกัส เหมาะสำหรับภาพทิวทัศน์</div>
+      </div>
+      <div class="card">
+        <div class="card-icon">🔍</div>
+        <div class="card-title">Partial Metering</div>
+        <div class="card-desc">วัดแสงจากส่วนเล็กๆ ประมาณ 10% ของเฟรมรอบจุดโฟกัส</div>
+      </div>
+      <div class="card">
+        <div class="card-icon">🎯</div>
+        <div class="card-title">Spot Metering</div>
+        <div class="card-desc">วัดแสงจากจุดโฟกัสเท่านั้น ประมาณ 2-4% ของพื้นที่ภาพ เหมาะกับสภาพแสงยากๆ</div>
+      </div>
+    </div>
+
+    <div class="content-block">
+      <h3>Exposure Compensation</h3>
+      <p>วิธีปรับแสงอย่างรวดเร็ว — ทำให้ภาพสว่างหรือมืดกว่าที่กล้องตั้งให้</p>
+      <div class="rule-grid">
+        <div class="rule-card">
+          <div class="rule-card-icon">➖</div>
+          <div class="rule-card-name">ค่าลบ (-1, -2...)</div>
+          <div class="rule-card-desc">ลดแสง ภาพมืดลง เหมาะสำหรับถ่าย sunset หรือสร้าง silhouette</div>
+        </div>
+        <div class="rule-card">
+          <div class="rule-card-icon">➕</div>
+          <div class="rule-card-name">ค่าบวก (+1, +2...)</div>
+          <div class="rule-card-desc">เพิ่มแสง ภาพสว่างขึ้น เหมาะสำหรับถ่ายวัตถุสีขาวหรือภาพหิมะ</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout warn">
+      <div class="callout-label">⚠️ สำคัญ!</div>
+      <p>หลังทำแบบฝึกหัด Exposure Compensation ต้องรีเซ็ตค่ากลับเป็น <strong>0</strong> เสมอก่อนออกไปถ่ายภาพ</p>
+    </div>
+
+    <div class="chapter-nav">
+      <button class="nav-btn" onclick="goTo('ch6')">← บทที่ 6</button>
+      <button class="nav-btn primary" onclick="goTo('ch8')">บทที่ 8: ISO →</button>
+    </div>
+  </div>
+
+  <!-- CH8: ISO -->
+  <div class="chapter-page" id="page-ch8">
+    <div class="chapter-eyebrow">บทที่ 8</div>
+    <h1 class="chapter-title">ISO</h1>
+    <p class="chapter-subtitle">ความไวแสงของ Sensor — ยิ่งสูงยิ่งไวแสง แต่ยิ่งมี Noise มาก</p>
+
+    <div class="content-block">
+      <h3>ISO คืออะไร?</h3>
+      <p>ISO ย่อมาจาก International Organization for Standardization — ในการถ่ายภาพหมายถึงความไวแสงของ Sensor กล้อง ยิ่งตัวเลขสูง กล้องไวต่อแสงมากขึ้น แต่จะมี "Noise" เพิ่มขึ้นด้วย</p>
+    </div>
+
+    <!-- ISO noise interactive demo -->
+    <div style="background:var(--surface2);border:1px solid var(--border);border-radius:14px;padding:24px;margin:20px 0;">
+      <div style="font-weight:700;margin-bottom:16px;font-size:15px;">🎛️ ทดลองดู Noise ในระดับ ISO ต่างๆ</div>
+      <div style="margin-bottom:12px;">
+        <label style="font-size:13px;color:var(--muted);">ISO: <span id="iso-display" style="color:var(--accent);font-weight:700;">100</span></label><br>
+        <input type="range" min="0" max="5" value="0" id="iso-slider" oninput="updateISO(this.value)"
+          style="width:100%;margin-top:8px;accent-color:var(--accent);">
+      </div>
+      <canvas id="iso-canvas" width="600" height="120" style="width:100%;border-radius:8px;display:block;"></canvas>
+      <div id="iso-quality" style="margin-top:10px;font-size:14px;color:var(--muted);text-align:center;"></div>
+    </div>
+
+    <div class="content-block">
+      <h3>เมื่อไหร่ควรใช้ ISO อะไร?</h3>
+      <div class="rule-grid">
+        <div class="rule-card">
+          <div class="rule-card-icon">☀️</div>
+          <div class="rule-card-name">ISO 100-200</div>
+          <div class="rule-card-desc">กลางแจ้งวันแดด แสงจ้า ได้คุณภาพภาพดีที่สุด Noise น้อยที่สุด</div>
+        </div>
+        <div class="rule-card">
+          <div class="rule-card-icon">🌤️</div>
+          <div class="rule-card-name">ISO 400-800</div>
+          <div class="rule-card-desc">ในร่ม แสงปกติ หรือกลางแจ้งวันมืดครึ้ม</div>
+        </div>
+        <div class="rule-card">
+          <div class="rule-card-icon">🌙</div>
+          <div class="rule-card-name">ISO 1600-6400+</div>
+          <div class="rule-card-desc">สภาพแสงน้อยมาก เช่น คอนเสิร์ต ร้านอาหาร ถ่ายมือเปล่าไม่ใช้แฟลช trade-off คือ Noise</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="key-points">
+      <div class="key-points-title">📋 สรุป ISO</div>
+      <ul>
+        <li>ISO ควบคุมความไวแสงของ Sensor — ตัวเลขต่ำต้องการแสงมาก, ตัวเลขสูงต้องการแสงน้อย</li>
+        <li>ข้อเสียของ ISO สูง คือ Noise ในภาพ (จุดกระจายดูนุ่มและเสียสี)</li>
+        <li>ข้อดีของ ISO สูง คือถ่ายภาพในที่มืดได้โดยไม่ต้องใช้แฟลชหรือขาตั้ง</li>
+        <li>ตั้ง ISO ต่ำที่สุดเท่าที่แสงจะอนุญาต เพื่อคุณภาพภาพดีที่สุด</li>
+      </ul>
+    </div>
+
+    <div class="chapter-nav">
+      <button class="nav-btn" onclick="goTo('ch7')">← บทที่ 7</button>
+      <button class="nav-btn primary" onclick="goTo('ch9')">บทที่ 9: รูรับแสง →</button>
+    </div>
+  </div>
+
+  <!-- CH9: Aperture -->
+  <div class="chapter-page" id="page-ch9">
+    <div class="chapter-eyebrow">บทที่ 9</div>
+    <h1 class="chapter-title">รูรับแสงและระยะชัด</h1>
+    <p class="chapter-subtitle">รูรับแสง (Aperture) คือหัวใจของการควบคุม depth of field และการรับแสง</p>
+
+    <div class="content-block">
+      <h3>Aperture คืออะไร?</h3>
+      <p>Aperture คือรูในเลนส์ที่ขยายหรือหดได้ เหมือนรูม่านตาของคุณ — สว่างรูจะเล็ก, มืดรูจะใหญ่ การรับแสงใน photography ประกอบด้วย Aperture และ Shutter Speed</p>
+    </div>
+
+    <div class="callout warn">
+      <div class="callout-label">⚠️ สิ่งที่ดูย้อนกลับ!</div>
+      <p>ตัวเลข f ยิ่ง<strong>น้อย</strong> = รูยิ่ง<strong>ใหญ่</strong> (แสงเข้ามาก) | ตัวเลข f ยิ่ง<strong>มาก</strong> = รูยิ่ง<strong>เล็ก</strong> (แสงเข้าน้อย)</p>
+    </div>
+
+    <!-- Aperture visual demo -->
+    <div style="background:var(--surface2);border:1px solid var(--border);border-radius:14px;padding:24px;margin:20px 0;">
+      <div style="font-weight:700;margin-bottom:16px;">🔆 ขนาดรูรับแสงแต่ละ f-stop</div>
+      <div class="aperture-demo" id="aperture-demo"></div>
+    </div>
+
+    <div class="content-block">
+      <h3>ลำดับ f-stop ที่ต้องจำ</h3>
+      <div class="exposure-visual">
+        <div class="exp-chip"><span class="exp-chip-val">f/1.4</span><span class="exp-chip-label">กว้างมาก</span></div>
+        <div class="exp-chip"><span class="exp-chip-val">f/2</span><span class="exp-chip-label"></span></div>
+        <div class="exp-chip"><span class="exp-chip-val">f/2.8</span><span class="exp-chip-label">กว้าง</span></div>
+        <div class="exp-chip"><span class="exp-chip-val">f/4</span><span class="exp-chip-label"></span></div>
+        <div class="exp-chip"><span class="exp-chip-val">f/5.6</span><span class="exp-chip-label">กลาง</span></div>
+        <div class="exp-chip"><span class="exp-chip-val">f/8</span><span class="exp-chip-label"></span></div>
+        <div class="exp-chip"><span class="exp-chip-val">f/11</span><span class="exp-chip-label">แคบ</span></div>
+        <div class="exp-chip"><span class="exp-chip-val">f/16</span><span class="exp-chip-label"></span></div>
+        <div class="exp-chip"><span class="exp-chip-val">f/22</span><span class="exp-chip-label">แคบมาก</span></div>
+      </div>
+      <p style="margin-top:12px;font-size:14px;color:var(--muted);">การเปลี่ยน 1 stop = ครึ่งหรือสองเท่าของปริมาณแสง (f/4 → f/5.6 = ลดแสงครึ่งหนึ่ง)</p>
+    </div>
+
+    <div class="content-block">
+      <h3>Depth of Field (ระยะชัด)</h3>
+      <p>ระยะชัดคือช่วงระยะห่างรอบจุดโฟกัสที่ยังคมชัด — ไม่ใช่แค่จุดโฟกัส แต่คือ <em>ระยะรอบๆ</em> จุดโฟกัสที่ sharp</p>
+    </div>
+
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-icon">🌸</div>
+        <div class="card-title">Shallow Depth of Field (ระยะชัดตื้น)</div>
+        <div class="card-desc">รูรับแสงกว้าง (f/1.4-f/2.8) — วัตถุหลักคม พื้นหลังเบลอ (โบเก้) เหมาะสำหรับภาพบุคคลและ portrait</div>
+      </div>
+      <div class="card">
+        <div class="card-icon">🏔️</div>
+        <div class="card-title">Large Depth of Field (ระยะชัดลึก)</div>
+        <div class="card-desc">รูรับแสงแคบ (f/11-f/22) — ทุกอย่างตั้งแต่พื้นหน้าถึงพื้นหลังคมชัด เหมาะสำหรับภาพทิวทัศน์</div>
+      </div>
+    </div>
+
+    <div class="content-block">
+      <h3>3 สิ่งที่ควบคุม Depth of Field</h3>
+      <div class="rule-grid">
+        <div class="rule-card">
+          <div class="rule-card-icon">🔆</div>
+          <div class="rule-card-name">1. Aperture (สำคัญที่สุด)</div>
+          <div class="rule-card-desc">รูกว้าง (f เล็ก) = ระยะชัดตื้น | รูแคบ (f ใหญ่) = ระยะชัดลึก</div>
+        </div>
+        <div class="rule-card">
+          <div class="rule-card-icon">🔭</div>
+          <div class="rule-card-name">2. Focal Length</div>
+          <div class="rule-card-desc">ซูมเข้า (mm มาก) = ระยะชัดตื้น | ซูมออก (mm น้อย) = ระยะชัดลึก</div>
+        </div>
+        <div class="rule-card">
+          <div class="rule-card-icon">📏</div>
+          <div class="rule-card-name">3. ระยะห่างจุดโฟกัส-เลนส์</div>
+          <div class="rule-card-desc">จุดโฟกัสใกล้เลนส์ = ระยะชัดตื้น | จุดโฟกัสไกลเลนส์ = ระยะชัดลึก</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="quiz-box">
+      <div class="quiz-q">🧠 คำถาม: ต้องการให้พื้นหลังเบลอ (โบเก้) ควรใช้ f-stop ไหน?</div>
+      <div class="quiz-options">
+        <button class="quiz-opt" onclick="answer(this,false)">f/16</button>
+        <button class="quiz-opt" onclick="answer(this,false)">f/11</button>
+        <button class="quiz-opt" onclick="answer(this,false)">f/8</button>
+        <button class="quiz-opt" onclick="answer(this,true)">f/2.8</button>
+      </div>
+      <div class="quiz-feedback ok">✅ ถูกต้อง! f/2.8 คือรูรับแสงกว้าง ทำให้ระยะชัดตื้น — วัตถุหลักคม พื้นหลังเบลอ</div>
+      <div class="quiz-feedback no">❌ ไม่ถูกต้อง ต้องการ f/2.8 — ตัวเลข f น้อย = รูกว้าง = ระยะชัดตื้น = พื้นหลังเบลอ (โบเก้)</div>
+    </div>
+
+    <div class="chapter-nav">
+      <button class="nav-btn" onclick="goTo('ch8')">← บทที่ 8</button>
+      <button class="nav-btn primary" onclick="goTo('ch10')">บทที่ 10: Shutter Speed →</button>
+    </div>
+  </div>
+
+  <!-- CH10: Shutter Speed -->
+  <div class="chapter-page" id="page-ch10">
+    <div class="chapter-eyebrow">บทที่ 10</div>
+    <h1 class="chapter-title">ความเร็วชัตเตอร์</h1>
+    <p class="chapter-subtitle">Shutter Speed ควบคุมเวลาที่แสงเข้ากล้อง — หยุดการเคลื่อนไหวหรือสร้างความเบลอ</p>
+
+    <div class="content-block">
+      <h3>ความเร็วชัตเตอร์คืออะไร?</h3>
+      <p>Shutter เป็นเหมือนประตูที่ให้แสงเข้ากล้องในช่วงเวลาหนึ่ง วัดเป็นเศษส่วนของวินาที (เช่น 1/60, 1/1000) หรือหน่วยวินาที (เช่น 2" = 2 วินาที)</p>
+    </div>
+
+    <div class="content-block">
+      <h3>ลำดับ Shutter Speed ที่ต้องจำ</h3>
+      <div class="exposure-visual" style="flex-wrap:wrap;">
+        <div class="exp-chip"><span class="exp-chip-val" style="color:#e87">30"</span><span class="exp-chip-label">ช้ามาก</span></div>
+        <div class="exp-chip"><span class="exp-chip-val" style="color:#fa0">1"</span><span class="exp-chip-label"></span></div>
+        <div class="exp-chip"><span class="exp-chip-val" style="color:#ff0">1/4</span><span class="exp-chip-label"></span></div>
+        <div class="exp-chip"><span class="exp-chip-val">1/15</span><span class="exp-chip-label"></span></div>
+        <div class="exp-chip"><span class="exp-chip-val">1/30</span><span class="exp-chip-label"></span></div>
+        <div class="exp-chip"><span class="exp-chip-val" style="color:#8f8;">1/60</span><span class="exp-chip-label">แฮนด์โฮลด์</span></div>
+        <div class="exp-chip"><span class="exp-chip-val">1/125</span><span class="exp-chip-label"></span></div>
+        <div class="exp-chip"><span class="exp-chip-val">1/500</span><span class="exp-chip-label">หยุดการเคลื่อน</span></div>
+        <div class="exp-chip"><span class="exp-chip-val" style="color:#4af;">1/1000</span><span class="exp-chip-label">เร็วมาก</span></div>
+      </div>
+    </div>
+
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-icon">🌊</div>
+        <div class="card-title">Shutter ช้า (Slow Shutter)</div>
+        <div class="card-desc">ต่ำกว่า 1/60" — สร้าง motion blur, ถ่ายน้ำตก/แสงรถยนต์, Light Painting ต้องใช้ขาตั้ง!</div>
+      </div>
+      <div class="card">
+        <div class="card-icon">❄️</div>
+        <div class="card-title">Shutter เร็ว (Fast Shutter)</div>
+        <div class="card-desc">เร็วกว่า 1/125" — หยุดการเคลื่อนไหว (freeze action) เหมาะกับกีฬา นก แมลง</div>
+      </div>
+      <div class="card">
+        <div class="card-icon">💨</div>
+        <div class="card-title">Camera Shake</div>
+        <div class="card-desc">ต่ำกว่า 1/60" เมื่อถือมือเปล่า ภาพจะเบลอจากการสั่นของมือ ใช้ขาตั้งหรือเพิ่ม shutter speed</div>
+      </div>
+      <div class="card">
+        <div class="card-icon">🏃</div>
+        <div class="card-title">Panning</div>
+        <div class="card-desc">ติดตามวัตถุเคลื่อนที่ด้วยกล้อง — วัตถุคม พื้นหลังเบลอ สร้างความรู้สึกความเร็ว</div>
+      </div>
+    </div>
+
+    <div class="task-box">
+      <div class="task-header">
+        <span class="task-badge">แบบฝึกหัด #17</span>
+        <span class="task-title">Panning</span>
+      </div>
+      <ul class="task-steps">
+        <li data-n="1">ตั้ง Shutter Speed ที่ 1/8 วินาที, Shutter Priority (S/Tv), ISO Auto</li>
+        <li data-n="2">วางกล้องบนขาตั้ง คลาย Pan Lock เพื่อให้ส่ายซ้าย-ขวาได้</li>
+        <li data-n="3">โฟกัสที่วัตถุที่กำลังเคลื่อนที่ กด shutter ค้างครึ่งทาง</li>
+        <li data-n="4">ขยับกล้องตามความเร็วของวัตถุ แล้วกดถ่าย</li>
+        <li data-n="5">ลองค่า Shutter Speed ต่างๆ — ไม่มีค่าเดียวที่ถูกสำหรับทุกสถานการณ์</li>
+      </ul>
+      <button class="task-done-btn" onclick="markDone(this)">✓ ทำเสร็จแล้ว</button>
+    </div>
+
+    <div class="chapter-nav">
+      <button class="nav-btn" onclick="goTo('ch9')">← บทที่ 9</button>
+      <button class="nav-btn primary" onclick="goTo('ch11')">บทที่ 11: การสมดุลแสง →</button>
+    </div>
+  </div>
+
+  <!-- CH11: Balancing Exposures -->
+  <div class="chapter-page" id="page-ch11">
+    <div class="chapter-eyebrow">บทที่ 11</div>
+    <h1 class="chapter-title">การสมดุลการรับแสง</h1>
+    <p class="chapter-subtitle">นี่คือสิ่งที่ทำให้คุณเป็นช่างภาพ ไม่ใช่แค่คนที่กดปุ่ม Auto</p>
+
+    <div class="content-block">
+      <h3>หลักการสมดุลแสง</h3>
+      <p>คิดว่าแสงที่มีอยู่เป็นน้ำหนักคงที่จำนวนหนึ่ง คุณต้องแจกแจงน้ำหนักระหว่าง Aperture และ Shutter Speed ให้รวมกันได้พอดี — ไม่ว่าจะแจกแจงอย่างไร ปริมาณแสงที่เข้ากล้องยังคงเท่าเดิม แต่ <strong>visual effect ต่างกัน</strong></p>
+    </div>
+
+    <!-- Interactive exposure balance -->
+    <div class="balance-demo">
+      <div style="font-weight:700;margin-bottom:20px;font-size:15px;">⚖️ ทดลองสมดุลการรับแสง</div>
+      <div class="balance-sliders">
+        <div class="slider-group">
+          <label>Aperture: <span class="slider-val" id="ap-val">f/8</span></label>
+          <input type="range" min="0" max="8" value="4" id="ap-slider" oninput="updateBalance()">
+          <div style="font-size:12px;color:var(--muted);margin-top:4px;" id="ap-effect">ระยะชัดปานกลาง</div>
+        </div>
+        <div class="slider-group">
+          <label>Shutter Speed: <span class="slider-val" id="ss-val">1/60</span></label>
+          <input type="range" min="0" max="8" value="4" id="ss-slider" oninput="updateBalance()">
+          <div style="font-size:12px;color:var(--muted);margin-top:4px;" id="ss-effect">ถ่ายมือเปล่าได้</div>
+        </div>
+      </div>
+      <div class="exposure-result">
+        <div style="margin-bottom:8px;font-size:13px;color:var(--muted);">การรับแสงสัมพัทธ์</div>
+        <div class="exp-meter">
+          <div class="exp-meter-fill" id="exp-fill" style="background:var(--success);left:50%;width:0%"></div>
+          <div class="exp-meter-center"></div>
+        </div>
+        <div id="exp-label" style="font-size:14px;margin-top:6px;color:var(--success);">รับแสงพอดี ✓</div>
+      </div>
+    </div>
+
+    <div class="content-block">
+      <h3>ตัวอย่างการคำนวณ</h3>
+      <div class="callout">
+        <div class="callout-label">📐 โจทย์ตัวอย่าง</div>
+        <p>Exposure ที่ถูกต้อง = <strong>1/60" ที่ f/8</strong><br>
+        ต้องการ shallow depth of field → เปลี่ยน aperture เป็น <strong>f/2.8</strong> (กว้างขึ้น 3 stops = แสงเพิ่ม 3 stops)<br>
+        ∴ ต้องลด shutter speed ลง 3 stops → 1/125 → 1/250 → <strong>1/500"</strong><br>
+        คำตอบ: <strong>1/500" ที่ f/2.8</strong> — แสงเท่าเดิม แต่ได้ shallow DoF!</p>
+      </div>
+    </div>
+
+    <div class="content-block">
+      <h3>บทบาทของ ISO</h3>
+      <p>ISO ไม่ได้สร้าง visual effect — ISO เป็นตัวช่วยเมื่อแสงไม่เพียงพอ เริ่มด้วยการเลือก visual effect ที่ต้องการ (shutter หรือ aperture) แล้วปรับ ISO เพื่อให้ได้แสงที่เพียงพอ</p>
+    </div>
+
+    <div class="task-box">
+      <div class="task-header">
+        <span class="task-badge">แบบฝึกหัด #21</span>
+        <span class="task-title">ใช้ Manual Mode เต็มรูปแบบ</span>
+      </div>
+      <ul class="task-steps">
+        <li data-n="1">หมุน dial ไปที่ M (Manual)</li>
+        <li data-n="2">ตั้ง ISO 400 (หรือ 100 ถ้าวันแดดจ้า)</li>
+        <li data-n="3">ตั้งกล้องบนขาตั้ง ใช้ timer 2 วินาที</li>
+        <li data-n="4">ถ่าย 2 ภาพจากสิ่งเดียวกัน: ภาพแรก shallow DoF, ภาพสอง motion blur</li>
+        <li data-n="5">ปรับ shutter/aperture จนเมตรชี้ที่ '0' (รับแสงพอดี)</li>
+      </ul>
+      <button class="task-done-btn" onclick="markDone(this)">✓ ทำเสร็จแล้ว</button>
+    </div>
+
+    <div class="chapter-nav">
+      <button class="nav-btn" onclick="goTo('ch10')">← บทที่ 10</button>
+      <button class="nav-btn primary" onclick="goTo('ch12')">บทที่ 12: Resolution →</button>
+    </div>
+  </div>
+
+  <!-- CH12: Resolution -->
+  <div class="chapter-page" id="page-ch12">
+    <div class="chapter-eyebrow">บทที่ 12</div>
+    <h1 class="chapter-title">ความละเอียดภาพ (Resolution)</h1>
+    <p class="chapter-subtitle">ความละเอียดคือจำนวน Pixel — สำคัญมากเมื่อต้องพิมพ์หรืออัปโหลดออนไลน์</p>
+
+    <div class="content-block">
+      <h3>Resolution คืออะไร?</h3>
+      <p>Resolution คือจำนวน Pixel ในภาพ Pixel คือส่วนเล็กที่สุดของภาพดิจิทัล (จุดสี่เหลี่ยมเล็กๆ) ยิ่ง Resolution สูง ยิ่งมี Pixel มาก ยิ่งสามารถพิมพ์ขนาดใหญ่ได้</p>
+    </div>
+
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-icon">🖼️</div>
+        <div class="card-title">High Resolution</div>
+        <div class="card-desc">เหมาะสำหรับพิมพ์ขนาดใหญ่, Crop ภาพ, งาน Client ไฟล์ใหญ่ ใช้พื้นที่มาก</div>
+      </div>
+      <div class="card">
+        <div class="card-icon">📱</div>
+        <div class="card-title">Low Resolution</div>
+        <div class="card-desc">เหมาะสำหรับอัปโหลดเว็บ, ส่งอีเมล, โซเชียลมีเดีย ไฟล์เล็ก โหลดเร็ว</div>
+      </div>
+    </div>
+
+    <div class="content-block">
+      <h3>PPI (Pixels Per Inch)</h3>
+      <div class="rule-grid">
+        <div class="rule-card">
+          <div class="rule-card-icon">🖥️</div>
+          <div class="rule-card-name">72 PPI — หน้าจอ</div>
+          <div class="rule-card-desc">ความละเอียดขั้นต่ำสำหรับแสดงบนหน้าจอ ถ้าต่ำกว่านี้จะเห็น pixel</div>
+        </div>
+        <div class="rule-card">
+          <div class="rule-card-icon">🖨️</div>
+          <div class="rule-card-name">300 PPI — พิมพ์</div>
+          <div class="rule-card-desc">ความละเอียดขั้นต่ำสำหรับพิมพ์คุณภาพดี เพราะตาเห็นรายละเอียดมากกว่าหน้าจอ</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="key-points">
+      <div class="key-points-title">📋 สรุป Resolution</div>
+      <ul>
+        <li>ตั้ง JPEG Quality ไว้ที่ Fine/Smooth Arch เสมอ</li>
+        <li>1 Megapixel = 1 ล้าน Pixel</li>
+        <li>High Res ดีสำหรับพิมพ์และ crop — Low Res ดีสำหรับอินเทอร์เน็ต</li>
+        <li>ภาพสำหรับพิมพ์ต้องมีอย่างน้อย 300 PPI</li>
+      </ul>
+    </div>
+
+    <div class="chapter-nav">
+      <button class="nav-btn" onclick="goTo('ch11')">← บทที่ 11</button>
+      <button class="nav-btn primary" onclick="goTo('ch13')">บทที่ 13: แสงและ WB →</button>
+    </div>
+  </div>
+
+  <!-- CH13: Light & White Balance -->
+  <div class="chapter-page" id="page-ch13">
+    <div class="chapter-eyebrow">บทที่ 13</div>
+    <h1 class="chapter-title">ทำความเข้าใจแสงและ White Balance</h1>
+    <p class="chapter-subtitle">แสงมีสี — รู้จักควบคุมสีของแสงเพื่อผลลัพธ์ที่ต้องการ</p>
+
+    <div class="content-block">
+      <h3>ประเภทของแสง</h3>
+      <div class="rule-grid">
+        <div class="rule-card">
+          <div class="rule-card-icon">☀️</div>
+          <div class="rule-card-name">แสงธรรมชาติ</div>
+          <div class="rule-card-desc">แดดเที่ยง = ขาวบริสุทธิ์ | พระอาทิตย์ขึ้น/ตก = ส้ม | ฟ้าครึ้ม = น้ำเงิน</div>
+        </div>
+        <div class="rule-card">
+          <div class="rule-card-icon">⚡</div>
+          <div class="rule-card-name">แสงแฟลช</div>
+          <div class="rule-card-desc">Studio lighting ควบคุมได้, Flashgun พกพาสะดวก ให้แสงสีขาวเหมือนแดดเที่ยง</div>
+        </div>
+        <div class="rule-card">
+          <div class="rule-card-icon">💡</div>
+          <div class="rule-card-name">แสง Tungsten</div>
+          <div class="rule-card-desc">หลอดไส้ทั่วไป ให้สีส้มอุ่น</div>
+        </div>
+        <div class="rule-card">
+          <div class="rule-card-icon">🌿</div>
+          <div class="rule-card-name">แสง Fluorescent</div>
+          <div class="rule-card-desc">หลอดนีออน/LED ให้สีเขียวเล็กน้อย</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="content-block">
+      <h3>Hard Light vs Soft Light</h3>
+      <div class="card-grid">
+        <div class="card">
+          <div class="card-icon">🌞</div>
+          <div class="card-title">Hard Light (แสงแข็ง)</div>
+          <div class="card-desc">แสงตรงจากแหล่งกำเนิด เช่น แดดจ้า แฟลชตรงๆ — สร้างเงาคม ผิวเงา</div>
+        </div>
+        <div class="card">
+          <div class="card-icon">🌤️</div>
+          <div class="card-title">Soft Light (แสงนุ่ม)</div>
+          <div class="card-desc">แสงสะท้อนหรือแสงผ่านวัสดุ เช่น ฟ้าครึ้ม ร่ม Softbox — เงานุ่มนวล น่ารัก</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="content-block">
+      <h3>White Balance</h3>
+      <p>กล้องเห็นสีของแสงจริงๆ (ต่างจากตาคนที่สมองปรับให้ขาวอัตโนมัติ) White Balance คือการบอกกล้องว่าแสงที่ถ่ายอยู่นั้นเป็นสีอะไร เพื่อให้กล้องปรับให้ขาว</p>
+    </div>
+
+    <div class="wb-demo">
+      <div class="wb-chip" style="background:#ffd890;">☀️ Daylight<span>แสงแดดเที่ยง</span></div>
+      <div class="wb-chip" style="background:#b8d4ff;color:#333;">☁️ Cloudy<span>ฟ้าครึ้ม +อุ่น</span></div>
+      <div class="wb-chip" style="background:#ffa040;">💡 Tungsten<span>หลอดไส้</span></div>
+      <div class="wb-chip" style="background:#c8ffb0;color:#333;">🌿 Fluorescent<span>หลอดนีออน</span></div>
+      <div class="wb-chip" style="background:#ddeeff;color:#333;">⚡ Flash<span>แสงแฟลช</span></div>
+    </div>
+
+    <div class="callout tip">
+      <div class="callout-label">💡 เทคนิค</div>
+      <p>ตั้ง White Balance เป็น <strong>Daylight</strong> เพื่อให้เห็นสีแสงจริงๆ โดยไม่มีการปรับแก้ เหมาะสำหรับถ่าย sunset ที่ต้องการสีส้มสวยๆ ไม่ใช่ AWB ที่จะพยายามลบสีส้มออก</p>
+    </div>
+
+    <div class="chapter-nav">
+      <button class="nav-btn" onclick="goTo('ch12')">← บทที่ 12</button>
+      <button class="nav-btn primary" onclick="goTo('ch14')">บทที่ 14: Light Painting →</button>
+    </div>
+  </div>
+
+  <!-- CH14: Light Painting -->
+  <div class="chapter-page" id="page-ch14">
+    <div class="chapter-eyebrow">บทที่ 14</div>
+    <h1 class="chapter-title">Light Painting — วาดภาพด้วยแสง</h1>
+    <p class="chapter-subtitle">รวมทุกสิ่งที่เรียนมา — Long Exposure + Creativity = ผลงานที่น่าทึ่ง</p>
+
+    <div class="content-block">
+      <h3>Light Painting คืออะไร?</h3>
+      <p>เป็นเทคนิคการใช้ Shutter Speed ยาว (15-30 วินาที) ถ่ายในที่มืด ขณะที่ใครสักคนโบกไฟฉายหรือ LED ในอากาศ แสงจะวาดเป็นเส้นสายในภาพ</p>
+    </div>
+
+    <div class="callout">
+      <div class="callout-label">📷 การตั้งค่าสำหรับ Light Painting</div>
+      <p>
+        🔻 Aperture: <strong>f/22</strong> (รูแคบมาก)<br>
+        ⏱️ Shutter Speed: <strong>15-30 วินาที</strong> (ช้ามาก)<br>
+        📷 ISO: <strong>100</strong> (ต่ำสุด ไม่มี Noise)<br>
+        📐 ขาตั้งกล้อง: <strong>จำเป็นต้องใช้!</strong><br>
+        🔦 อุปกรณ์: ไฟฉาย / LED / แฟลช
+      </p>
+    </div>
+
+    <div class="task-box">
+      <div class="task-header">
+        <span class="task-badge">แบบฝึกหัด #26</span>
+        <span class="task-title">สร้าง Light Paintings</span>
+      </div>
+      <ul class="task-steps">
+        <li data-n="1">ไปในที่มืดสนิท (ในร่มหรือกลางคืน)</li>
+        <li data-n="2">ตั้งกล้องบนขาตั้ง, โหมด M</li>
+        <li data-n="3">Shutter Speed 15-30", Aperture f/22, ISO 100</li>
+        <li data-n="4">ใช้ Manual Focus เพราะที่มืด AF จะทำงานไม่ได้</li>
+        <li data-n="5">กดชัตเตอร์ แล้วโบกไฟฉายวาดรูปในอากาศ</li>
+        <li data-n="6">ทดลองซ้ำหลายครั้ง ปรับ Shutter Speed ตามผลลัพธ์</li>
+      </ul>
+      <button class="task-done-btn" onclick="markDone(this)">✓ ทำเสร็จแล้ว</button>
+    </div>
+
+    <div class="chapter-nav">
+      <button class="nav-btn" onclick="goTo('ch13')">← บทที่ 13</button>
+      <button class="nav-btn primary" onclick="goTo('ch15')">บทที่ 15: Flash →</button>
+    </div>
+  </div>
+
+  <!-- CH15: Flash -->
+  <div class="chapter-page" id="page-ch15">
+    <div class="chapter-eyebrow">บทที่ 15</div>
+    <h1 class="chapter-title">การสมดุลแสงด้วย Flash</h1>
+    <p class="chapter-subtitle">Fill-in Flash — ใช้แฟลชกลางแจ้งเพื่อควบคุมเงาและพื้นหลัง</p>
+
+    <div class="content-block">
+      <h3>Fill-in Flash คืออะไร?</h3>
+      <p>Fill-in Flash ใช้เพื่อเพิ่มแสงในบริเวณที่เป็นเงาเมื่อถ่ายกลางแจ้งในวันแดดจ้า หลายคนคิดว่าไม่ต้องใช้แฟลชนอกอาคาร แต่มันช่วยได้มาก!</p>
+    </div>
+
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-icon">☀️</div>
+        <div class="card-title">ไม่มีแฟลช</div>
+        <div class="card-desc">วัตถุหลักมีเงาหนักเพราะแสงแดดจ้า ใบหน้าอาจมืดเกินไป</div>
+      </div>
+      <div class="card" style="border-color:var(--accent)">
+        <div class="card-icon">⚡</div>
+        <div class="card-title">Fill-in Flash ⭐</div>
+        <div class="card-desc">แฟลชเติมแสงที่บริเวณเงา ใบหน้าสว่างสม่ำเสมอ ในขณะที่พื้นหลังยังเห็นได้ชัด</div>
+      </div>
+    </div>
+
+    <div class="content-block">
+      <h3>เทคนิคขั้นสูง: ควบคุมพื้นหลัง</h3>
+      <p>รวม <strong>Exposure Compensation</strong> (ควบคุมพื้นหลัง) กับ <strong>Flash Exposure Compensation</strong> (ควบคุมแฟลช) เพื่อสร้างเอฟเฟกต์ต่างๆ</p>
+    </div>
+
+    <div class="rule-grid">
+      <div class="rule-card">
+        <div class="rule-card-icon">⬇️</div>
+        <div class="rule-card-name">Ambient -1, -2 stops</div>
+        <div class="rule-card-desc">พื้นหลังมืดลง — ตัดกับวัตถุหลักที่ถูกแฟลชส่อง ได้ภาพดูดราม่า</div>
+      </div>
+      <div class="rule-card">
+        <div class="rule-card-icon">⬆️</div>
+        <div class="rule-card-name">Flash +1, +2 stops</div>
+        <div class="rule-card-desc">วัตถุหลักสว่างขึ้น เน้นให้โดดเด่นจากพื้นหลัง</div>
+      </div>
+    </div>
+
+    <div class="key-points">
+      <div class="key-points-title">📋 สรุป Fill-in Flash</div>
+      <ul>
+        <li>Fill-in Flash ใช้ลดเงาในวันแดดจ้า</li>
+        <li>ผสมกับ Exposure Compensation เพื่อทำพื้นหลังมืดลงได้</li>
+        <li>Pop-up Flash มีพิสัยสั้น — Flashgun แบบแยกดีกว่าสำหรับกลางแจ้ง</li>
+        <li>เทคนิคนี้เหมาะมากสำหรับภาพบุคคล (Portrait)</li>
+      </ul>
+    </div>
+
+    <div class="chapter-nav">
+      <button class="nav-btn" onclick="goTo('ch14')">← บทที่ 14</button>
+      <button class="nav-btn primary" onclick="goTo('ch16')">บทที่ 16: Post-production →</button>
+    </div>
+  </div>
+
+  <!-- CH16: Post-production -->
+  <div class="chapter-page" id="page-ch16">
+    <div class="chapter-eyebrow">บทที่ 16</div>
+    <h1 class="chapter-title">Post-production และ Raw Files</h1>
+    <p class="chapter-subtitle">ทุกภาพถ่ายดีๆ ผ่านการ Post-process มาแล้ว — เรียนรู้เมื่อคุณพร้อม</p>
+
+    <div class="callout warn">
+      <div class="callout-label">⚠️ สำคัญ!</div>
+      <p>Post-processing แทบไม่สามารถช่วยภาพที่ถ่ายผิดพลาดได้ เรียนรู้เทคนิคการถ่ายให้ดีก่อน แล้วค่อยมาเรียน Post-production</p>
+    </div>
+
+    <div class="content-block">
+      <h3>Raw vs JPEG</h3>
+      <div class="card-grid">
+        <div class="card">
+          <div class="card-icon">📄</div>
+          <div class="card-title">Raw File</div>
+          <div class="card-desc">เหมือน Negative ฟิล์ม — เก็บข้อมูลทุกอย่างจาก Sensor ไม่บีบอัด ต้องประมวลผลก่อนดู Latitude สูง ปรับได้มากใน Post (2-3 stops) ไฟล์ใหญ่กว่า JPEG 3-5 เท่า</div>
+        </div>
+        <div class="card">
+          <div class="card-icon">🖼️</div>
+          <div class="card-title">JPEG File</div>
+          <div class="card-desc">ภาพที่พร้อมดูทันที กล้องบีบอัดข้อมูลให้ มีข้อมูลน้อยกว่า Raw ปรับใน Post ได้น้อยกว่า (1-1.5 stops) เหมาะสำหรับผู้เริ่มเรียน</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="content-block">
+      <h3>โปรแกรม Post-processing</h3>
+      <div class="rule-grid">
+        <div class="rule-card">
+          <div class="rule-card-icon">🆓</div>
+          <div class="rule-card-name">Pixlr.com</div>
+          <div class="rule-card-desc">ใช้บนเบราว์เซอร์ ฟรี ไม่ต้องติดตั้ง เหมาะสำหรับเริ่มต้น</div>
+        </div>
+        <div class="rule-card">
+          <div class="rule-card-icon">🆓</div>
+          <div class="rule-card-name">GIMP</div>
+          <div class="rule-card-desc">โปรแกรมฟรีที่ทรงพลัง ดาวน์โหลดจาก gimp.org</div>
+        </div>
+        <div class="rule-card">
+          <div class="rule-card-icon">💰</div>
+          <div class="rule-card-name">Adobe Lightroom ⭐</div>
+          <div class="rule-card-desc"><strong>แนะนำ!</strong> จัดการและตกแต่งภาพจำนวนมาก เหมาะสำหรับ Raw files เรียนนี้ก่อน</div>
+        </div>
+        <div class="rule-card">
+          <div class="rule-card-icon">💰</div>
+          <div class="rule-card-name">Adobe Photoshop</div>
+          <div class="rule-card-desc">ทรงพลังที่สุด เหมาะสำหรับงานมืออาชีพ เรียนหลังจาก Lightroom</div>
+        </div>
+        <div class="rule-card">
+          <div class="rule-card-icon">💰</div>
+          <div class="rule-card-name">Affinity Photo</div>
+          <div class="rule-card-desc">ทางเลือก Photoshop ราคาถูกกว่า โดย Serif ทรงพลังไม่แพ้กัน</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="content-block">
+      <h3>ขั้นตอน Post-processing ใน Lightroom (Raw)</h3>
+      <ol style="list-style:none;display:flex;flex-direction:column;gap:12px;padding:0;">
+        <li style="display:flex;gap:12px;align-items:flex-start;"><span style="background:var(--accent);color:#000;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;">1</span><span style="color:#c8d0de;">เลือก Color Profile (เช่น Adobe Landscape สำหรับทิวทัศน์)</span></li>
+        <li style="display:flex;gap:12px;align-items:flex-start;"><span style="background:var(--accent);color:#000;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;">2</span><span style="color:#c8d0de;">Basic Panel: ปรับ Exposure, Highlights, Shadows, Saturation, Vibrance</span></li>
+        <li style="display:flex;gap:12px;align-items:flex-start;"><span style="background:var(--accent);color:#000;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;">3</span><span style="color:#c8d0de;">Tone Curve: เพิ่ม Contrast ด้วย S-Curve</span></li>
+        <li style="display:flex;gap:12px;align-items:flex-start;"><span style="background:var(--accent);color:#000;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;">4</span><span style="color:#c8d0de;">HSL/Color: ปรับสีแต่ละสีแยกกัน</span></li>
+        <li style="display:flex;gap:12px;align-items:flex-start;"><span style="background:var(--accent);color:#000;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;">5</span><span style="color:#c8d0de;">Detail: Sharpening 80, Radius 1.2</span></li>
+        <li style="display:flex;gap:12px;align-items:flex-start;"><span style="background:var(--accent);color:#000;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;">6</span><span style="color:#c8d0de;">Lens Corrections: Remove Chromatic Aberration</span></li>
+        <li style="display:flex;gap:12px;align-items:flex-start;"><span style="background:var(--accent);color:#000;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;">7</span><span style="color:#c8d0de;">Crop Tool: ปรับ Composition</span></li>
+        <li style="display:flex;gap:12px;align-items:flex-start;"><span style="background:var(--accent);color:#000;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;">8</span><span style="color:#c8d0de;">Effects: เพิ่ม Vignette รอบขอบ</span></li>
+      </ol>
+    </div>
+
+    <div class="chapter-nav">
+      <button class="nav-btn" onclick="goTo('ch15')">← บทที่ 15</button>
+      <button class="nav-btn primary" onclick="goTo('ch17')">บทที่ 17: บทสรุป →</button>
+    </div>
+  </div>
+
+  <!-- CH17: Recap -->
+  <div class="chapter-page" id="page-ch17">
+    <div class="chapter-eyebrow">บทที่ 17</div>
+    <h1 class="chapter-title">บทสรุปท้ายหนังสือ</h1>
+    <p class="chapter-subtitle">ยินดีด้วย! คุณผ่านคู่มือการถ่ายภาพสำหรับผู้เริ่มต้นครบแล้ว</p>
+
+    <div class="callout tip">
+      <div class="callout-label">🎉 ยินดีด้วย!</div>
+      <p>คุณเรียนจบหนังสือ The School of Photography: Beginner's Guide แล้ว ขอให้ได้รับ 2 สิ่งจากหนังสือนี้: ความรู้ที่ทำให้ถ่ายภาพดีขึ้น และความสนุกในการเรียน</p>
+    </div>
+
+    <div class="content-block">
+      <h3>สิ่งที่คุณได้เรียนรู้ทั้งหมด</h3>
+    </div>
+
+    <div class="key-points">
+      <div class="key-points-title">📋 บทสรุปทุกบท</div>
+      <ul>
+        <li><strong>กล้องและอุปกรณ์</strong> — DSLR เหมาะสำหรับผู้เริ่มต้น, ขาตั้งคือสิ่งจำเป็น</li>
+        <li><strong>โหมด Manual</strong> — ลืม Auto! ใช้ P, Av/A, Tv/S, M เท่านั้น</li>
+        <li><strong>การโฟกัส</strong> — Focus → Reframe → Shoot, ใช้ Spot AF กลางเฟรม</li>
+        <li><strong>องค์ประกอบภาพ</strong> — Rule of Thirds, Leading Lines, Frame in Frame, Space ฯลฯ</li>
+        <li><strong>เลนส์และ Focal Length</strong> — ใช้ focal length เพื่อ effect ที่ต้องการ ไม่ใช่เพราะขี้เกียจเดิน</li>
+        <li><strong>Metering</strong> — Evaluative ใช้ได้ดีส่วนใหญ่, Spot สำหรับสภาพแสงยาก</li>
+        <li><strong>ISO</strong> — ต่ำ = คุณภาพดี, สูง = ถ่ายที่มืดได้ trade-off คือ Noise</li>
+        <li><strong>Resolution</strong> — High Res พิมพ์, Low Res อินเทอร์เน็ต, 300PPI สำหรับพิมพ์</li>
+        <li><strong>แสงและ White Balance</strong> — รู้จักสีแสงต่างๆ และปรับ WB เพื่อ effect ที่ต้องการ</li>
+        <li><strong>Aperture และ Depth of Field</strong> — f เล็ก = กว้าง = ระยะชัดตื้น, f ใหญ่ = แคบ = ระยะชัดลึก</li>
+        <li><strong>Shutter Speed</strong> — ช้า = blur/motion, เร็ว = freeze action</li>
+        <li><strong>การสมดุลแสง</strong> — ผสม Aperture + Shutter Speed ให้แสงรวมเท่าเดิมแต่ effect ต่างกัน</li>
+        <li><strong>Light Painting</strong> — รวมทุกทักษะ, Long exposure + ความมืด + แสงเคลื่อนที่</li>
+        <li><strong>Fill-in Flash</strong> — ลดเงาในวันแดด, ควบคุมพื้นหลังด้วย Exposure Comp</li>
+        <li><strong>Post-production & Raw</strong> — เรียน Lightroom ก่อน Photoshop, Raw ให้ latitude มากกว่า</li>
+      </ul>
+    </div>
+
+    <div style="background:linear-gradient(135deg,rgba(245,166,35,.1),rgba(232,114,74,.1));border:1px solid var(--accent);border-radius:16px;padding:32px;margin:32px 0;text-align:center;">
+      <div style="font-size:40px;margin-bottom:16px;">📸</div>
+      <div style="font-family:'Prompt',sans-serif;font-size:22px;font-weight:700;margin-bottom:12px;">ก้าวต่อไปของคุณ</div>
+      <p style="color:var(--muted);max-width:480px;margin:0 auto 20px;line-height:1.8;">ออกไปถ่ายภาพ! ความรู้จะตกผลึกก็ต่อเมื่อได้ฝึกจริงๆ ทำผิดพลาดและเรียนรู้จากความผิดพลาดนั้น — นั่นคือวิธีที่ดีที่สุด</p>
+      <div style="font-size:14px;color:var(--accent);">แชร์ผลงานด้วย #theschoolofphotography</div>
+    </div>
+
+    <div style="display:flex;justify-content:center;margin-top:20px;">
+      <button class="nav-btn" onclick="goTo('ch16')" style="margin-right:16px;">← บทที่ 16</button>
+      <button class="nav-btn primary" onclick="goTo('home')">🏠 กลับหน้าหลัก</button>
+    </div>
+  </div>
+
+</main>
+
+<script>
+  const pages = ['home','ch1','ch2','ch3','ch4','ch5','ch6','ch7','ch8','ch9','ch10','ch11','ch12','ch13','ch14','ch15','ch16','ch17'];
+  const done = new Set();
+
+  function goTo(page) {
+    document.querySelectorAll('.chapter-page').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    document.getElementById('page-' + page).classList.add('active');
+    document.querySelector('[data-page="' + page + '"]').classList.add('active');
+    window.scrollTo(0, 0);
+    if(window.innerWidth <= 768) document.getElementById('sidebar').classList.remove('open');
+    updateProgress();
+  }
+
+  function toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('open');
+  }
+
+  function answer(btn, correct) {
+    const box = btn.closest('.quiz-box');
+    box.querySelectorAll('.quiz-opt').forEach(b => b.style.pointerEvents = 'none');
+    btn.classList.add(correct ? 'correct' : 'wrong');
+    const feedbacks = box.querySelectorAll('.quiz-feedback');
+    feedbacks[0].classList.toggle('show', correct);
+    feedbacks[1].classList.toggle('show', !correct);
+  }
+
+  function markDone(btn) {
+    btn.classList.add('done');
+    btn.textContent = '✓ เสร็จแล้ว!';
+    updateProgress();
+  }
+
+  function updateProgress() {
+    const total = pages.length - 1;
+    const doneCount = document.querySelectorAll('.task-done-btn.done').length;
+    const pct = Math.round(doneCount / 28 * 100);
+    document.getElementById('progress-fill').style.width = pct + '%';
+    document.getElementById('progress-text').textContent = `แบบฝึกหัด ${doneCount}/28 เสร็จสิ้น`;
+  }
+
+  // ISO noise canvas
+  const isoLevels = [100, 400, 800, 1600, 6400, 25600];
+  const isoLabels = ['ISO 100\n(ดีที่สุด)','ISO 400','ISO 800','ISO 1600','ISO 6400','ISO 25600\n(Noise มาก)'];
+  const isoQuality = ['✨ คุณภาพยอดเยี่ยม ไม่มี Noise เลย', '👍 คุณภาพดีมาก Noise แทบไม่เห็น', '👌 คุณภาพดี Noise เล็กน้อย', '⚠️ Noise เริ่มเห็นชัด แต่ใช้ได้', '🔴 Noise มาก ภาพดูหยาบ', '❌ Noise รุนแรงมาก สีและรายละเอียดเสียหาย'];
+
+  function drawISO(level) {
+    const canvas = document.getElementById('iso-canvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const w = canvas.width, h = canvas.height;
+    ctx.clearRect(0, 0, w, h);
+    const noiseAmt = level / 5;
+    // base gradient
+    const grd = ctx.createLinearGradient(0, 0, w, 0);
+    grd.addColorStop(0, '#1a2030');
+    grd.addColorStop(0.5, '#2a3050');
+    grd.addColorStop(1, '#1a2030');
+    ctx.fillStyle = grd;
+    ctx.fillRect(0, 0, w, h);
+    // noise
+    if (noiseAmt > 0) {
+      const img = ctx.getImageData(0, 0, w, h);
+      const d = img.data;
+      for (let i = 0; i < d.length; i += 4) {
+        const n = (Math.random() - 0.5) * noiseAmt * 160;
+        d[i] = Math.min(255, Math.max(0, d[i] + n));
+        d[i+1] = Math.min(255, Math.max(0, d[i+1] + n * (0.7 + Math.random()*0.3)));
+        d[i+2] = Math.min(255, Math.max(0, d[i+2] + n * (0.5 + Math.random()*0.5)));
+      }
+      ctx.putImageData(img, 0, 0);
+    }
+    // subject circle
+    ctx.beginPath();
+    ctx.arc(w/2, h/2, 30, 0, Math.PI*2);
+    ctx.fillStyle = `rgba(200,180,120,${1 - noiseAmt*0.4})`;
+    ctx.fill();
+  }
+
+  function updateISO(val) {
+    const level = parseInt(val);
+    document.getElementById('iso-display').textContent = isoLevels[level].toLocaleString();
+    document.getElementById('iso-quality').textContent = isoQuality[level];
+    drawISO(level);
+  }
+
+  // Aperture visual
+  const apertures = ['f/1.4','f/2','f/2.8','f/4','f/5.6','f/8','f/11','f/16','f/22'];
+  const sizes = [80,72,64,56,48,40,32,24,16];
+  function buildApertureDemo() {
+    const el = document.getElementById('aperture-demo');
+    if (!el) return;
+    apertures.forEach((f, i) => {
+      const div = document.createElement('div');
+      div.className = 'ap-item';
+      const sz = sizes[i];
+      div.innerHTML = `
+        <div class="ap-circle" style="width:${sz}px;height:${sz}px;border-color:var(--accent)">
+          <div class="ap-circle-hole" style="width:${Math.round(sz*0.6)}px;height:${Math.round(sz*0.6)}px;background:rgba(245,166,35,0.25)"></div>
+        </div>
+        <span class="ap-label" style="font-size:11px;color:${i<3?'var(--accent)':i>5?'#4af':'var(--muted)'}">${f}</span>
+      `;
+      el.appendChild(div);
+    });
+  }
+
+  // Exposure balance
+  const apVals = ['f/1.4','f/2','f/2.8','f/4','f/5.6','f/8','f/11','f/16','f/22'];
+  const ssVals = ['30"','4"','1"','1/4','1/15','1/60','1/125','1/500','1/1000'];
+  const apEffects = ['ระยะชัดตื้นมาก (โบเก้สวยมาก)','ระยะชัดตื้นมาก','ระยะชัดตื้น (portrait)','ระยะชัดตื้นปานกลาง','ระยะชัดปานกลาง','ระยะชัดปานกลาง','ระยะชัดลึก','ระยะชัดลึกมาก','ระยะชัดลึกมาก (ทิวทัศน์)'];
+  const ssEffects = ['Long Exposure — Light Painting','Long Exposure','เบลอมาก ต้องใช้ขาตั้ง','เบลอ ต้องใช้ขาตั้ง','เริ่มเบลอ ต้องระวัง','ถ่ายมือเปล่าได้ขั้นต่ำ','Freeze เคลื่อนไหวช้า','Freeze เคลื่อนไหวเร็ว','Freeze สิ่งเคลื่อนไหวสูง'];
+  function updateBalance() {
+    const ap = parseInt(document.getElementById('ap-slider').value);
+    const ss = parseInt(document.getElementById('ss-slider').value);
+    document.getElementById('ap-val').textContent = apVals[ap];
+    document.getElementById('ss-val').textContent = ssVals[ss];
+    document.getElementById('ap-effect').textContent = apEffects[ap];
+    document.getElementById('ss-effect').textContent = ssEffects[ss];
+    const total = ap + ss;
+    const diff = total - 8;
+    const fill = document.getElementById('exp-fill');
+    const label = document.getElementById('exp-label');
+    const pct = Math.abs(diff) * 8;
+    if (diff === 0) {
+      fill.style.background = 'var(--success)';
+      fill.style.left = '50%';
+      fill.style.width = '0%';
+      label.style.color = 'var(--success)';
+      label.textContent = 'รับแสงพอดี ✓';
+    } else if (diff > 0) {
+      fill.style.background = 'var(--accent2)';
+      fill.style.left = '50%';
+      fill.style.width = Math.min(pct, 50) + '%';
+      label.style.color = 'var(--accent2)';
+      label.textContent = `รับแสงมากเกิน (Overexposed) +${diff} stop`;
+    } else {
+      fill.style.background = '#4a6fcc';
+      fill.style.left = Math.max(50 - Math.min(pct,50), 0) + '%';
+      fill.style.width = Math.min(pct, 50) + '%';
+      label.style.color = '#4a6fcc';
+      label.textContent = `รับแสงน้อยเกิน (Underexposed) ${diff} stop`;
+    }
+  }
+
+  // Init
+  window.addEventListener('DOMContentLoaded', () => {
+    buildApertureDemo();
+    updateISO(0);
+    updateBalance();
+  });
+</script>
+</body>
+</html>
